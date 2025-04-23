@@ -7,25 +7,26 @@ module.exports = (db) => {
   router.get('/', async (req, res) => {
     const sql = `
       SELECT 
-        NV.MaNV,
-        NV.Ho,
-        NV.Ten,
-        DN.SoNha,
-        DN.Duong,
-        DN.Quan,
-        DN.ThanhPho,
-        SDT.SDT,
-        Email.Email,
-        CL.NgayLam,
-        CL.GioLam,
-        CL.GioTan
-      FROM 
-        NhanVien NV
-      LEFT JOIN DiaChiNV DN ON NV.MaNV = DN.MaNV
-      LEFT JOIN SDT_NhanVien SDT ON NV.MaNV = SDT.MaNV
-      LEFT JOIN Email_NhanVien Email ON NV.MaNV = Email.MaNV
-      LEFT JOIN NV_Lam NVL ON NV.MaNV = NVL.MaNV
-      LEFT JOIN CaLam CL ON NVL.MaCa = CL.MaCa;
+  NV.MaNV,
+  NV.Ho,
+  NV.Ten,
+  MAX(DN.SoNha) AS SoNha,
+  MAX(DN.Duong) AS Duong,
+  MAX(DN.Quan) AS Quan,
+  MAX(DN.ThanhPho) AS ThanhPho,
+  GROUP_CONCAT(DISTINCT SDT.SDT) AS SDT,
+  GROUP_CONCAT(DISTINCT Email.Email) AS Email,
+  MAX(CL.NgayLam) AS NgayLam,
+  MAX(CL.GioLam) AS GioLam,
+  MAX(CL.GioTan) AS GioTan
+FROM 
+  NhanVien NV
+LEFT JOIN DiaChiNV DN ON NV.MaNV = DN.MaNV
+LEFT JOIN SDT_NhanVien SDT ON NV.MaNV = SDT.MaNV
+LEFT JOIN Email_NhanVien Email ON NV.MaNV = Email.MaNV
+LEFT JOIN NV_Lam NVL ON NV.MaNV = NVL.MaNV
+LEFT JOIN CaLam CL ON NVL.MaCa = CL.MaCa
+GROUP BY NV.MaNV;
     `;
     try {
       const [results] = await db.query(sql);

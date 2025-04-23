@@ -790,32 +790,6 @@ INSERT INTO UserAccount (MaNV, Username, Password, Role) VALUES
 ('NV0002', 'staff', '2', 'Employee');
 
 
-SELECT 
-    NV.MaNV,
-    NV.Ho,
-    NV.Ten,
-    DN.SoNha,
-    DN.Duong,
-    DN.Quan,
-    DN.ThanhPho,
-    SDT.SDT,
-    Email.Email,
-    CL.NgayLam,
-    CL.GioLam,
-    CL.GioTan
-FROM 
-    NhanVien NV
-LEFT JOIN 
-    DiaChiNV DN ON NV.MaNV = DN.MaNV
-LEFT JOIN 
-    SDT_NhanVien SDT ON NV.MaNV = SDT.MaNV
-LEFT JOIN 
-    Email_NhanVien Email ON NV.MaNV = Email.MaNV
-LEFT JOIN 
-    NV_Lam NVL ON NV.MaNV = NVL.MaNV
-LEFT JOIN 
-    CaLam CL ON NVL.MaCa = CL.MaCa;
-    
 SHOW DATABASES;
 SHOW TABLES;
 SHOW WARNINGS;

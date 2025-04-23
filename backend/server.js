@@ -22,15 +22,15 @@ let db;
 async function startServer() {
   try {
     db = await mysql.createPool({
-      host: 'localhost',
+      host: 'crossover.proxy.rlwy.net',
       user: 'root',
-      password: 'Nhanha213#',
-      database: 'TAKEAWAY_CAFE',
-      port: 3306,
+      password: 'RcUnvKZHWbCAUZDDaovUEOvuOdYUTOTp',
+      database: 'railway',
+      port: 30541,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      connectTimeout: 50000
+      connectTimeout: 5000
     });
 
 
