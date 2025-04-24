@@ -8,7 +8,7 @@ import Employee from './component/employee/employee';
 import DrinkManagement from './pages/DrinkManagement';
 import EmployeeManagement from './pages/EmployeeManagement';
 import Report from './pages/Report';
-import Order from './pages/OrderStatus';
+import Order from './pages/Order';
 import Menu from './pages/Menu';
 import Voucher from './pages/Vouchers';
 import { OrderProvider } from './context/OrderContext';
