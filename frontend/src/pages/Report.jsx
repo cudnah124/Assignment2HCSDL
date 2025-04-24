@@ -1,33 +1,59 @@
-import React, { useState } from "react";
-import '../styles/format.css';
-
-const reports = [
-  {
-    date: "2025-04-17",
-    soldDrinks: ["Espresso", "Latte", "Trà Đào"],
-    total: 150,
-    discount: 20,
-    profit: 130,
-    orders: [
-      { id: "ORD001", items: ["Espresso", "Latte"], bill: 50, voucher: "SAVE10", employee: "NV0001" },
-      { id: "ORD002", items: ["Trà Đào"], bill: 100, voucher: "NEW5", employee: "NV0002" },
-    ],
-  },
-  {
-    date: "2025-04-18",
-    soldDrinks: ["Cappuccino"],
-    total: 75,
-    discount: 5,
-    profit: 70,
-    orders: [
-      { id: "ORD003", items: ["Cappuccino"], bill: 75, voucher: "None", employee: "NV0003" },
-    ],
-  },
-];
+import React, { useEffect, useState } from "react";
+import "../styles/format.css";
 
 function ReportByDate() {
+  const [reports, setReports] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
   const [searchDate, setSearchDate] = useState("");
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/recepit");
+        const data = await res.json();
+
+        const completed = data.filter((d) => d.TrangThai === "Completed");
+        const grouped = {};
+
+        for (const order of completed) {
+          const date = order.NgayGioTao.slice(0, 10);
+          const tongTien = parseFloat(order.TongTien || 0);
+
+          if (!grouped[date]) {
+            grouped[date] = {
+              date,
+              orders: [],
+            };
+          }
+
+          // Tách tên + số lượng: "Trà Sữa x2" => "Trà Sữa (2)"
+          const drinkNames = order.NuocUong?.split(", ").map((d) => {
+            const match = d.match(/^(.*)\s+x(\d+)$/);
+            if (match) {
+              const [, name, qty] = match;
+              return `${name} x ${qty}`;
+            }
+            return d; // fallback nếu không khớp
+          }) || [];
+
+          grouped[date].orders.push({
+            id: order.MaDonHang,
+            drinkNames,
+            bill: tongTien,
+            voucher: "Không rõ",
+            employee: order.MaNV,
+          });
+        }
+
+        const finalReports = Object.values(grouped);
+        setReports(finalReports);
+      } catch (err) {
+        console.error("Lỗi lấy báo cáo:", err);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   const filteredReports = searchDate
     ? reports.filter((r) => r.date === searchDate)
@@ -47,6 +73,7 @@ function ReportByDate() {
       <div className="report-table">
         <div className="report-row header">
           <span>Date</span>
+          <span>Order ID</span>
           <span>Sold Drinks</span>
           <span>Total</span>
           <span>Discount</span>
@@ -55,13 +82,20 @@ function ReportByDate() {
         </div>
 
         {filteredReports.map((report) => (
-          <div className="report-row" key={report.date}>
-            <span>{report.date}</span>
-            <span>{report.soldDrinks.join(", ")}</span>
-            <span>${report.total}</span>
-            <span>${report.discount}</span>
-            <span>${report.profit}</span>
-            
+          <div key={report.date}>
+            {report.orders.map((order) => (
+              <div className="report-row" key={order.id}>
+                <span>{report.date}</span>
+                <span>{order.id}</span>
+                <span>{order.drinkNames.join(", ")}</span>
+                <span>${order.bill.toFixed(0)}</span>
+                <span>$0</span>
+                <span>${order.bill.toFixed(0)}</span>
+                {/* <span>
+                  <button onClick={() => setSelectedReport(order)}>View</button>
+                </span> */}
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -69,17 +103,12 @@ function ReportByDate() {
       {selectedReport && (
         <div className="popup-overlay" onClick={() => setSelectedReport(null)}>
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Details for {selectedReport.date}</h3>
-            {selectedReport.orders.map((order) => (
-              <div key={order.id} style={{ marginBottom: "10px" }}>
-                <p><strong>Order ID:</strong> {order.id}</p>
-                <p><strong>Items:</strong> {order.items.join(", ")}</p>
-                <p><strong>Bill:</strong> ${order.bill}</p>
-                <p><strong>Voucher:</strong> {order.voucher}</p>
-                <p><strong>Processed by:</strong> {order.employee}</p>
-                <hr />
-              </div>
-            ))}
+            <h3>Details for Order ID {selectedReport.id}</h3>
+            <p><strong>Order ID:</strong> {selectedReport.id}</p>
+            <p><strong>Items:</strong> {selectedReport.drinkNames.join(", ")}</p>
+            <p><strong>Bill:</strong> ${selectedReport.bill.toFixed(2)}</p>
+            <p><strong>Voucher:</strong> {selectedReport.voucher}</p>
+            <p><strong>Processed by:</strong> {selectedReport.employee}</p>
             <button onClick={() => setSelectedReport(null)}>Close</button>
           </div>
         </div>

@@ -86,7 +86,7 @@ function OrderSidebar() {
 
             <button className={OS.printButton} onClick={openModal}>Print Receipt</button>
             {showModal && (
-            <Customer onClose={closeModal} onSubmit={handleCustomerSubmit} total={total} />
+            <Customer onClose={closeModal} onSubmit={handleCustomerSubmit} total={total} orderItems={orderItems} />
             )}
         </div>
     );

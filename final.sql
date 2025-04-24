@@ -325,6 +325,28 @@ DELIMITER $$
 
 DELIMITER $$
 
+CREATE TRIGGER prevent_topping_without_drinks
+BEFORE INSERT ON GomDH_Topping
+FOR EACH ROW
+BEGIN
+    DECLARE count_drinks INT;
+
+    SELECT COUNT(*) INTO count_drinks
+    FROM GomDH_NuocUong
+    WHERE MaDonHang = NEW.MaDonHang;
+
+    IF count_drinks = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Không thể thêm topping vào đơn hàng chưa có nước uống.';
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
 CREATE TRIGGER trg_ValidateItemsInOrder_Drink
 AFTER INSERT ON GomDH_NuocUong
 FOR EACH ROW
@@ -465,8 +487,6 @@ BEGIN
     ORDER BY TongSoLuong ASC;
 END//
 DELIMITER ;
-
-USE railway;
 
 -- Insert data into NhanVien (Employee)
 INSERT INTO NhanVien (MaNV, Ho, Ten) VALUES
@@ -787,7 +807,7 @@ INSERT INTO UserAccount (MaNV, Username, Password, Role) VALUES
 ('NV0001', 'admin', '1', 'Manager'),
 ('NV0002', 'staff', '2', 'Employee');
 
-SELECT * FROM GomDH_NuocUong;
-SHOW DATABASES;
-SHOW TABLES;
+-- SELECT * FROM GomDH_NuocUong;
+-- SHOW DATABASES;
+-- SHOW TABLES;
 SHOW ERRORS;

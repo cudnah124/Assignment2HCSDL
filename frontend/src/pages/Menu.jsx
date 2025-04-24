@@ -9,30 +9,36 @@ function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [popupDrink, setPopupDrink] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
-  const { orderItems, addItem } = useOrder();
+  const { addItem } = useOrder();
   const [searchTerm, setSearchTerm] = useState("");
   const { drinks: menuItems } = useContext(DrinkContext); // Lấy drinks từ DrinkContext
 
   const addToOrder = () => {
-    if (selectedSize === null) return;
-
-    // Tìm đồ uống đã chọn trong menuItems
+    if (!popupDrink) return;
+    
+    // Nếu là Drink thì bắt buộc phải chọn size
+    if (popupDrink.category === "Drink" && selectedSize === null) return;
+  
     const selectedDrink = menuItems.find(item => item.id === popupDrink.id);
     if (!selectedDrink) return;
-
+  
     const priceObj = selectedDrink.price;
+  
     const newItem = {
+      id: selectedDrink.id,               // MaMon
       name: selectedDrink.name,
-      size: selectedSize,
-      price: priceObj[selectedSize] || priceObj[""],
+      category: selectedDrink.category,  // "Drink" hoặc "Topping"
+      size: selectedDrink.category === "Drink" ? selectedSize : null, // 👈 null nếu là Topping
+      price: priceObj[selectedSize] || priceObj[""], // Giá theo size hoặc mặc định
       quantity: 1
     };
-
+  
     addItem(newItem);
-
+  
     setPopupDrink(null);
     setSelectedSize(null);
   };
+  
 
   const filteredDrinks = menuItems.filter((drink) => {
     if (selectedCategory !== "All" && drink.category !== selectedCategory) {
@@ -151,7 +157,6 @@ function Menu() {
             </div>
           </div>
         )}
-
         {/* Order Sidebar */}
         <OrderSidebar />
       </div>

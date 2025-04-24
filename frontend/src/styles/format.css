@@ -98,7 +98,7 @@
 
 .report-row {
   display: grid;
-  grid-template-columns: 150px 1fr 100px 100px 100px 100px;
+  grid-template-columns: 150px 100px 1fr 100px 100px 100px;
   align-items: center;
   padding: 10px 15px;
   background-color: #fdfdfd;

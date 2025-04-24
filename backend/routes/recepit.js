@@ -2,48 +2,131 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (db) => {
-    router.get('./', async (req, res) => {
-        const sql=`SELECT 
+    // API GET danh sách đơn hàng
+    router.get('/', async (req, res) => {
+        const sql = `
+        SELECT 
             dh.MaDonHang,
             dh.MaNV,
-            
-            -- Danh sách nước uống (tên món + kích thước + số lượng)
+            dh.TrangThai,
+    
             GROUP_CONCAT(DISTINCT 
                 CONCAT(m1.TenMon, ' (', gnu.KichThuoc, ') x', gnu.SoLuong)
                 SEPARATOR ', '
             ) AS NuocUong,
-
-            -- Danh sách topping (tên + số lượng)
+    
             GROUP_CONCAT(DISTINCT 
                 CONCAT(m2.TenMon, ' x', gt.SoLuong)
                 SEPARATOR ', '
             ) AS Topping,
-
-            -- Tổng tiền
-            IFNULL(SUM(gnu.SoLuong * ktd.Gia), 0) + IFNULL(SUM(gt.SoLuong * t.Gia), 0) AS TongTien,
-
-            dh.NgayGioTao
-
+    
+            CAST(
+                IFNULL(SUM(gnu.SoLuong * ktd.Gia), 0) +
+                IFNULL(SUM(gt.SoLuong * t.Gia), 0)
+                AS DECIMAL(10,2)
+            ) AS TongTien,
+    
+            DATE_FORMAT(dh.NgayGioTao, '%Y-%m-%dT%H:%i:%s') AS NgayGioTao
+    
         FROM DonHang dh
-        LEFT JOIN GomDH_NuocUong gnu ON dh.MaDonHang = gnu.MaDonHang
+        JOIN GomDH_NuocUong gnu ON dh.MaDonHang = gnu.MaDonHang
         LEFT JOIN KichThuocDoUong ktd ON gnu.MaMon = ktd.MaMon AND gnu.KichThuoc = ktd.KichThuoc
-        JOIN Menu m1 ON gnu.MaMon = m1.MaMon
-
+        LEFT JOIN Menu m1 ON gnu.MaMon = m1.MaMon
+    
         LEFT JOIN GomDH_Topping gt ON dh.MaDonHang = gt.MaDonHang
         LEFT JOIN Topping t ON gt.MaMon = t.MaMon
-        JOIN Menu m2 ON gt.MaMon = m2.MaMon
-
-        GROUP BY dh.MaDonHang, dh.MaNV, dh.NgayGioTao
+        LEFT JOIN Menu m2 ON gt.MaMon = m2.MaMon
+    
+        GROUP BY dh.MaDonHang, dh.MaNV, dh.TrangThai, dh.NgayGioTao
         ORDER BY dh.NgayGioTao DESC;
-        `
+        `;
+    
         try {
             const [results] = await db.query(sql);
-            res.json(results); // Trả kết quả dưới dạng JSON
-          } catch (err) {
+            res.json(results.map(row => ({
+                ...row,
+                TongTien: parseFloat(row.TongTien),  // Ép kiểu số rõ ràng
+            })));
+        } catch (err) {
             console.error('Lỗi lấy đơn hàng:', err);
             res.status(500).json({ error: 'Lỗi server' });
         }
-    })
+    });
 
-    
-}
+    // API POST thêm đơn hàng mới
+    router.post('/', async (req, res) => {
+        const { MaNV, TrangThai, NuocUong, Topping, NgayGioTao } = req.body;
+
+        // Kiểm tra và ép kiểu các trường dữ liệu
+        const employeeId = String(MaNV).trim();  // Mã nhân viên cần là string
+        const status = String(TrangThai).trim(); // Trạng thái đơn hàng cần là string
+        const orderDate = new Date(NgayGioTao);  // Ngày giờ tạo cần là kiểu Date
+        if (isNaN(orderDate)) {
+            return res.status(400).json({ error: 'Ngày giờ tạo không hợp lệ' });
+        }
+
+        // Kiểm tra và ép kiểu các mục trong NuocUong và Topping
+        const drinks = NuocUong.map(item => {
+            return {
+                MaMon: String(item.MaMon).trim(),
+                KichThuoc: String(item.KichThuoc).trim(),
+                SoLuong: parseInt(item.SoLuong, 10)
+            };
+        });
+
+        const toppings = Topping.map(item => {
+            return {
+                MaMon: String(item.MaMon).trim(),
+                SoLuong: parseInt(item.SoLuong, 10)
+            };
+        });
+
+        // Bắt đầu transaction để đảm bảo tính toàn vẹn của dữ liệu
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Bước 1: Truy vấn mã đơn hàng lớn nhất hiện có
+            const [result] = await connection.query('SELECT MAX(MaDonHang) AS maxOrderId FROM DonHang');
+            const maxOrderId = result[0].maxOrderId || 0; // Nếu không có đơn hàng nào, maxOrderId = 0
+            const newOrderId = maxOrderId + 1; // Tạo mã đơn hàng mới
+
+            // Bước 2: Thêm đơn hàng vào bảng DonHang
+            const [insertOrderResult] = await connection.query(
+                `INSERT INTO DonHang (MaDonHang, MaNV, TrangThai, NgayGioTao) VALUES (?, ?, ?, ?)`,
+                [newOrderId, employeeId, status, orderDate]
+            );
+
+            // Bước 3: Thêm nước uống vào bảng GomDH_NuocUong
+            for (const nuoc of drinks) {
+                const { MaMon, KichThuoc, SoLuong } = nuoc;
+                await connection.query(
+                    `INSERT INTO GomDH_NuocUong (MaDonHang, MaMon, KichThuoc, SoLuong) VALUES (?, ?, ?, ?)`,
+                    [newOrderId, MaMon, KichThuoc, SoLuong]
+                );
+            }
+
+            // Bước 4: Thêm topping vào bảng GomDH_Topping
+            for (const topping of toppings) {
+                const { MaMon, SoLuong } = topping;
+                await connection.query(
+                    `INSERT INTO GomDH_Topping (MaDonHang, MaMon, SoLuong) VALUES (?, ?, ?)`,
+                    [newOrderId, MaMon, SoLuong]
+                );
+            }
+
+            // Commit transaction
+            await connection.commit();
+            res.status(201).json({ message: 'Đơn hàng đã được thêm thành công!', MaDonHang: newOrderId });
+        } catch (err) {
+            // Rollback transaction nếu có lỗi
+            await connection.rollback();
+            console.error('Lỗi thêm đơn hàng:', err);
+            res.status(500).json({ error: 'Lỗi server khi thêm đơn hàng' });
+        } finally {
+            connection.release();
+        }
+    });
+
+    return router;
+};

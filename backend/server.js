@@ -7,7 +7,7 @@ const authRoutes = require('./routes/auth');
 const menuRoutes = require('./routes/menu');
 const paymentRoutes = require('./routes/customer');
 const employeesRoutes = require('./routes/employee');
-const recepit = require('./routes/recepit');
+const recepitRoutes = require('./routes/recepit');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -39,7 +39,7 @@ async function startServer() {
     app.use('/api/menu', menuRoutes(db));
     app.use('/api/customer', paymentRoutes(db));
     app.use('/api/employees', employeesRoutes(db));
-    // app.use('/api/recepit', recepitRoutes(db));
+    app.use('/api/recepit', recepitRoutes(db));
 
     app.get('/users', async (req, res) => {
       try {

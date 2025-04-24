@@ -1,42 +1,41 @@
-import React, { useState } from "react";
-import '../styles/format.css';
-
-const orders = [
-  {
-    id: "1",
-    bill: "$18.50",
-    date: "2025-04-18",
-    voucher: "SAVE10",
-    items: ["Espresso", "Matcha Latte"],
-    status: "Completed",
-    employeeID: "NV0001",
-    customerID: "1",
-  },
-  {
-    id: "2",
-    bill: "$9.00",
-    date: "2025-04-17",
-    voucher: "NEW5",
-    items: ["Cappuccino"],
-    status: "Pending",
-    employeeID: "NV0002",
-    customerID: "2",
-
-  },
-  {
-    id: "3",
-    bill: "$12.75",
-    date: "2025-04-17",
-    voucher: "None",
-    items: ["Trà Đào", "Bạc xỉu"],
-    status: "Cancelled",
-    employeeID: "NV0003",
-    customerID: "3",
-  },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "../styles/format.css";
 
 function OrderStatus() {
+  const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Hàm gọi API để lấy dữ liệu đơn hàng
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/recepit");
+  
+      const formattedOrders = response.data.map(order => {
+        const tongTien = Number(order.TongTien) || 0;
+  
+        return {
+          id: order.MaDonHang,
+          bill: `${tongTien.toFixed(0)}`,
+          date: order.NgayGioTao.slice(0, 10),
+          voucher: order.voucher || "None",  // nếu không có trường này trong DB thì bỏ hoặc xử lý riêng
+          items: order.NuocUong ? order.NuocUong.split(", ") : [],
+          status: order.TrangThai,
+          employeeID: order.MaNV,
+          customerID: order.customerID || "Unknown",  // nếu có trường này trong DB
+        };
+      });
+  
+      setOrders(formattedOrders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchOrders(); // Lấy đơn hàng khi component được render
+  }, []);
 
   return (
     <div className="order-status-container">
