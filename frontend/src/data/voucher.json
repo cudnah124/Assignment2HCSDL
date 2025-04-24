@@ -1,0 +1,93 @@
+[
+    {
+      "code": "KM001",
+      "discountPercent": 10,
+      "minOrder": 50000.0,
+      "maxDiscount": 20000.0,
+      "dateBegin": "2024-04-01",
+      "dateEnd": "2024-04-15",
+      "Times": 100
+    },
+    {
+      "code": "KM002",
+      "discountPercent": 15,
+      "minOrder": 100000.0,
+      "maxDiscount": 30000.0,
+      "dateBegin": "2024-04-01",
+      "dateEnd": "2024-04-30",
+      "Times": 50
+    },
+    {
+      "code": "KM003",
+      "discountPercent": 20,
+      "minOrder": 150000.0,
+      "maxDiscount": 40000.0,
+      "dateBegin": "2024-04-15",
+      "dateEnd": "2024-05-15",
+      "Times": 30
+    },
+    {
+      "code": "KM004",
+      "discountPercent": 25,
+      "minOrder": 200000.0,
+      "maxDiscount": 50000.0,
+      "dateBegin": "2024-05-01",
+      "dateEnd": "2024-05-31",
+      "Times": 20
+    },
+    {
+      "code": "KM005",
+      "discountPercent": 30,
+      "minOrder": 250000.0,
+      "maxDiscount": 60000.0,
+      "dateBegin": "2024-06-01",
+      "dateEnd": "2024-06-30",
+      "Times": 10
+    },
+    {
+      "code": "KM006",
+      "discountPercent": 10,
+      "minOrder": 50000.0,
+      "maxDiscount": 15000.0,
+      "dateBegin": "2024-07-01",
+      "dateEnd": "2024-07-15",
+      "Times": 100
+    },
+    {
+      "code": "KM007",
+      "discountPercent": 15,
+      "minOrder": 100000.0,
+      "maxDiscount": 25000.0,
+      "dateBegin": "2024-07-16",
+      "dateEnd": "2024-07-31",
+      "Times": 50
+    },
+    {
+      "code": "KM008",
+      "discountPercent": 20,
+      "minOrder": 150000.0,
+      "maxDiscount": 35000.0,
+      "dateBegin": "2024-08-01",
+      "dateEnd": "2024-08-15",
+      "Times": 30
+    },
+    {
+      "code": "KM009",
+      "discountPercent": 25,
+      "minOrder": 200000.0,
+      "maxDiscount": 45000.0,
+      "dateBegin": "2024-08-16",
+      "dateEnd": "2024-08-31",
+      "Times": 20
+    },
+    {
+      "code": "KM010",
+      "discountPercent": 30,
+      "minOrder": 250000.0,
+      "maxDiscount": 55000.0,
+      "dateBegin": "2024-09-01",
+      "dateEnd": "2024-09-30",
+      "Times": 10
+    }
+  ]
+  

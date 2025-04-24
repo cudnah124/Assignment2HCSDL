@@ -1,0 +1,74 @@
+/* Basic styling for the body */ 
+
+/* Container for the header section */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 20px;
+    background-color: #f5d2b6;
+    padding: 20px;  
+    color: rgb(20, 14, 14);
+    margin:10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+} 
+
+.topBar {
+    display: flex;
+    align-items: center; 
+}
+
+/* Logo styling */
+.logo {
+    width: 50px;
+    /* Adjust size of logo */
+    height: 50px;
+    margin-right: 15px;
+}
+
+/* Main title for coffee name */
+.coffeeName {
+    font-size: 29px;
+    font-weight: bold;
+}
+
+.logoutP {
+    color: rgb(0, 0, 0); 
+    cursor: pointer;
+    margin-left: auto;
+} 
+
+.active {
+    color: #a16c01;
+    text-decoration: underline;
+}
+
+/* Container for Menu and Promotions */
+.vouchers {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+} 
+
+.option {
+    padding: 10px 20px;
+    background-color: #f7f7f7;
+    margin-right: 380px;
+}
+
+.option nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 10px 80px;
+    background-color: #f4f4f4;
+    justify-content: left;
+    gap: 40px;
+}
+
+.option nav ul li a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: bold;
+}
+ 

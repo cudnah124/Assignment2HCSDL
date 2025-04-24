@@ -1,0 +1,74 @@
+.voucherManageContainer {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    background-color: #f9fafb;
+  }
+  
+  .mainContent {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    margin-right: 380px;
+  }
+  
+  .voucherHeader {
+    margin-bottom: 1.5rem;
+  }
+  
+  .voucherHeader h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+  }
+  
+  .voucherList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .voucherItem {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .voucherItem:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .voucherItem h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+  
+  .voucherItem p {
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
+    color: #374151;
+  }
+  
+  .addBtn {
+    margin-top: 0.8rem;
+    padding: 0.5rem 1rem;
+    background-color: #2563eb;
+    color: #fff;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .addBtn:hover {
+    background-color: #1d4ed8;
+  }
+  

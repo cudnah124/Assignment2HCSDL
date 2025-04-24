@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Tra sua tran chau",
+    "category": "Coffee",
+    "image": "/images/drinks/expresso1.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Tra xanh",
+    "category": "Coffee",
+    "image": "/images/drinks/latte.jpg",
+    "price": {
+      "S": 40000,
+      "M": 45000
+    }
+  },
+  {
+    "id": 3,
+    "name": "Ca phe sua",
+    "category": "Coffee",
+    "image": "/images/drinks/capuccino.jpg",
+    "price": {
+      "S": 35000,
+      "M": 40000
+    }
+  },
+  {
+    "id": 4,
+    "name": "Ca phe den",
+    "category": "Coffee",
+    "image": "/images/drinks/bacxiu.webp",
+    "price": {
+      "S": 30000,
+      "M": 35000
+    }
+  },
+  {
+    "id": 5,
+    "name": "Cà phê trứng",
+    "category": "Coffee",
+    "image": "/images/drinks/cftrung.jpg",
+    "price": {
+      "S": 35000,
+      "M": 40000
+    }
+  },
+  {
+    "id": 6,
+    "name": "Cà phê muối",
+    "category": "Coffee",
+    "image": "/images/drinks/ca-phe-muoi.webp",
+    "price": {
+      "S": 35000,
+      "M": 40000
+    }
+  },
+  {
+    "id": 7,
+    "name": "Thach dua",
+    "category": "Tea",
+    "image": "/images/drinks/tradao.jpg",
+    "price": {
+      "S": 30000,
+      "M": 35000
+    }
+  },
+  {
+    "id": 8,
+    "name": "Tran chau duong den",
+    "category": "Tea",
+    "image": "/images/drinks/travaithieu.jpg",
+    "price": {
+      "S": 30000,
+      "M": 35000
+    }
+  },
+  {
+    "id": 9,
+    "name": "Cam Ép",
+    "category": "Fruit Juice",
+    "image": "/images/drinks/nuoccam.jpg",
+    "price": {
+      "S": 25000,
+      "M": 30000
+    }
+  },
+  {
+    "id": 10,
+    "name": "Thơm Ép",
+    "category": "Fruit Juice",
+    "image": "/images/drinks/thomep.jpg",
+    "price": {
+      "S": 25000,
+      "M": 30000
+    }
+  }
+]

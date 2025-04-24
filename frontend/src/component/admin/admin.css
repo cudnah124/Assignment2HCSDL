@@ -1,0 +1,92 @@
+ .header_admin { 
+     height: 100vh; 
+ }
+
+ .side-nav {
+     width: 250px;
+     height: 100%;
+     /*full viewport height */
+     position: fixed;
+     top: 0;
+     left: 0;
+     padding: 30px 20px;
+     background: #fdf6e3 
+ }
+
+ .user {
+     display: flex;
+     flex-direction: column;
+     align-items: center;  
+     font-size: 15px;
+     padding: 10px;
+     /*generate space around an element's content*/ 
+ }
+
+ .user-img {
+     width: 100px;
+     height: 100px;
+     object-fit: cover;
+     border-radius: 50%;
+     margin-bottom: 10px;
+ }
+
+ .user-info {
+     text-align: center; 
+ }
+
+ .nav-links {
+     list-style: none;
+     margin-top: 30px;
+     padding-left: 0;
+ }
+
+ .nav-links li {
+     margin: 20px ;
+ }
+
+ .nav-links a {
+     display: flex;
+     align-items: center;
+     text-decoration: none;
+     color: #333;
+     font-size: 15px;
+     padding: 10px; 
+ }
+
+ .nav-links a:hover {
+    background-color: #555;
+    padding: 10px;
+    border-radius: 5px;
+ }
+
+ .icon {
+     width: 20px; 
+     margin-right: 10px; 
+ }
+
+ .main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+ }
+
+ .navbar {
+    background-color: #d1d1d1;
+    color: rgb(63, 43, 6);
+    padding: 20px; 
+    margin-left: 250px;
+  }
+
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+  }
+
+  .app-name {
+    font-size: 27px;
+  }
+
+  .logout-link {
+    color: rgb(0, 0, 0); 
+  } 

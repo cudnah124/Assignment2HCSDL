@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+ 
+.wrapper {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-size: cover;
+  background-position: center; 
+  font-family: 'Poppins';
+  color: #ffff;
+  place-items: center;
+}
+
+.content {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  padding: 0 1rem;
+}
+
+/*format for box login*/
+form {
+  width: 330px;
+  border: 2px solid #ffffff;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+form .title {
+  font-size: 2.3rem;
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.box {
+  position: relative;
+  display: grid;
+  grid-template-columns: 10% 90%;
+  border-bottom: 1.5px solid;
+  margin-bottom: 3rem;
+}
+
+.inputBox {
+  position: relative;
+  padding: 0.4rem 0.5rem 0;
+}
+
+.label {
+   display: block;
+   position: absolute;
+   top: 0.2rem;
+   transition: 0.5s;
+}
+.box.focus .label {
+  top: -1.2rem;
+  font-size: 0.8rem;
+}
+
+.input {
+  outline: none;
+  border: none;
+  background: transparent; 
+  font-size: 1.2rem; 
+  width: 100%;
+  color: #ffff;
+  padding: 0.6rem 0 0.2rem;
+}
+
+.inputBox:has(.input:focus) .label,
+.inputBox:has(.input:not(:placeholder-shown)) .label {
+  top: -0.8rem;
+  left: 0.4rem;
+  font-size: 0.75rem;
+  color: #ffffff;
+  background: transparent;
+  padding: 0 0.25rem;
+}
+
+.forgot {
+  margin-bottom: 1.5rem;
+  text-align: end;
+}
+
+.optionBoxes {
+  display: flex;
+  justify-content: space-between; 
+  gap: 10px;
+}
+
+.optionBox {
+  flex: 1;
+  background-color: transparent; 
+  padding: 8px;
+  color: #ffff;
+  border-radius: 10px;
+}
+
+.optionBox:hover {
+  transform: scale(1.05);
+  background-color: #808080;
+}
+
+ 
