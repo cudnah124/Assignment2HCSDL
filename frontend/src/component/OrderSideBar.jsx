@@ -1,40 +1,29 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { FaTrash } from "react-icons/fa" 
 import OS from "../styles/orderSideBar.module.css";
 import Customer from "./Customer/Customer"
 import { useOrder } from "../context/OrderContext";
 
 function OrderSidebar() {
 
-    const {orderItems, appliedVoucher, increaseQuantity, decreaseQuantity, removeItem } = useOrder();
+    const { orderItems, appliedVoucher, total, discount, subtotal,
+        increaseQuantity, decreaseQuantity, removeItem } = useOrder();
     const [showModal, setShowModal] = useState(false);
 
     const openModal = () => {
         setShowModal(true);
-      };
-      
-      // Hàm đóng modal
+    };
+
+    // Hàm đóng modal
     const closeModal = () => {
         setShowModal(false);
     };
-      
+
     const handleCustomerSubmit = (customerData) => {
         console.log("Thông tin khách hàng:", customerData);
         // Bạn có thể gọi API để thanh toán tại đây hoặc xử lý dữ liệu
     };
 
-    const subtotal = orderItems.reduce((sum, item) => {
-        const price = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
-        return sum + price * item.quantity;
-    }, 0);
-
-    let discount = 0;
-    if (appliedVoucher && subtotal >= appliedVoucher.minOrder) {
-        discount = Math.min(
-            (subtotal * appliedVoucher.discountPercent) / 100,
-            appliedVoucher.maxDiscount
-        );
-    } 
-    const total = subtotal - discount; 
     return (
         <div className={OS.sidebar}>
             <div className={OS.customerInfo} >
@@ -61,7 +50,9 @@ function OrderSidebar() {
                             <span className={OS.quantity}>{item.quantity}</span>
                             <button className={OS.quantityBtn} onClick={() => increaseQuantity(item)}>+</button>
                         </div>
-                        <button className={OS.removeBtn} onClick={() => removeItem(item)}></button>
+                        <button className={OS.removeBtn} onClick={() => removeItem(item)}>
+                            <FaTrash />
+                        </button>
                     </div>
                 ))}
             </div>
@@ -86,7 +77,7 @@ function OrderSidebar() {
 
             <button className={OS.printButton} onClick={openModal}>Print Receipt</button>
             {showModal && (
-            <Customer onClose={closeModal} onSubmit={handleCustomerSubmit} total={total} />
+                <Customer onClose={closeModal} onSubmit={handleCustomerSubmit} total={total} />
             )}
         </div>
     );
