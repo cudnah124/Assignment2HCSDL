@@ -15,8 +15,20 @@ async function fetchAllCustomers() {
 }
 
 // Route test
-router.get('/', (req, res) => {
-  res.json({ message: "Hello from customer route!" });
+router.get('/', async (req, res) => {
+  const sql = `
+  SELECT KH.MaKH, KH.Ho, KH.Ten, KH.DiemTichLuy, KH.LoaiThanhVien, SDT.SDT
+  FROM KhachHang KH
+  LEFT JOIN SDT_KhachHang SDT ON KH.MaKH = SDT.MaKH
+  ORDER BY KH.MaKH DESC
+  `;
+  try {
+    const [results] = await db.query(sql);
+    res.json(results);
+  } catch (err) {
+    console.error('Lỗi lấy employees:', err);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
 });
 
 // Route GET để lấy toàn bộ khách hàng
