@@ -16,43 +16,36 @@ function Customer({ onClose, onSubmit, total, orderItems }) {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const employeeId = "NV0001";
+    const now = new Date().toISOString();
     const status = "Pending";
   
     try {
       // B1: Nếu có khách hàng, thêm vào DB
-      let customerId = null;
       if (wantToInputCustomer) {
-        const customerData = { ho: firstname, ten: lastname, sdt: phone };
-        const res = await axios.post('http://localhost:5000/api/customer', customerData);
-        customerId = res.data.insertId;
+        const customerData = { firstname, lastname, phone };
+        await axios.post('http://localhost:5000/api/customer', customerData);
       }
   
       // B2: Chuẩn bị dữ liệu đơn hàng
-      const drinks = orderItems
-        .filter(item => item.category === "Drink")
-        .map(item => ({
-          MaMon: item.id,
-          KichThuoc: item.size,
-          SoLuong: item.quantity
-        }));
-  
-      const toppings = orderItems
-        .filter(item => item.category === "Topping")
-        .map(item => ({
-          MaMon: item.id,
-          SoLuong: item.quantity
-        }));
-  
       const orderPayload = {
-        TrangThai: status,
-        MaNV: employeeId,
-        MaKH: customerId,
-        NgayGioTao: now,
-        NuocUong: drinks,
-        Topping: toppings
+        MaNV: "NV0002",                      // mã nhân viên (string)
+        TrangThai: status,           // trạng thái đơn hàng (string)
+        NgayGioTao: now, // ISO datetime
+        NuocUong: orderItems
+          .filter(item => item.category === "Drink")
+          .map(item => ({
+            MaMon: item.id,                // mã món nước
+            KichThuoc: item.size,          // size: "S", "M", "L"
+            SoLuong: item.quantity         // số lượng
+          })),
+        Topping: orderItems
+          .filter(item => item.category === "Topping")
+          .map(item => ({
+            MaMon: item.id,                // mã topping
+            SoLuong: item.quantity         // số lượng
+          }))
       };
+
   
       await axios.post('http://localhost:5000/api/recepit', orderPayload);
       alert("✅ Đơn hàng đã được thêm!");
