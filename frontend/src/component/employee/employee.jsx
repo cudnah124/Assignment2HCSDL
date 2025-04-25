@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom"; 
 import EF from "./employee.module.css";
+import logo from "./logo.jpg";
+
 function EmployeeDashboard() {
 
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ function EmployeeDashboard() {
       {/* Header with Coffee Name and Logo */} 
       <div className={EF.header}>
         <div className={EF.topBar} >
-          <img src="./login.jpg" alt="Coffe logo" className={EF.logo} />
+          <img src={logo} alt="Coffe logo" className={EF.logo} />
           <div className={EF.coffeeName}>Lord of the Ring</div>
         </div>
         <span className={EF.logoutP} onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</span>
@@ -29,6 +31,7 @@ function EmployeeDashboard() {
           <ul>
             <li><NavLink to="menu" className={({ isActive }) => isActive ? EF.active : ""}>Menu</NavLink></li>
             <li><NavLink to="voucher" className={({ isActive }) => isActive ? EF.active : ""}>Voucher</NavLink></li>
+            <li><NavLink to="order" className={({ isActive }) => isActive ? EF.active : ""}>Orders</NavLink></li>
           </ul>
         </nav>
       </div>

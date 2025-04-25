@@ -150,3 +150,19 @@
   font-size: 16px;
   color: #888;
 }
+
+.confirmBtn{
+   margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    box-shadow: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.confirmBtn:hover {
+  background-color: #301d00;
+  color: #fff;
+}
