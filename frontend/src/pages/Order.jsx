@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/format.css";
+import "../styles/format.css";  
 
 function OrderStatus() {
   const [orders, setOrders] = useState([]);
@@ -38,13 +38,13 @@ function OrderStatus() {
   }, []);
 
   return (
-    <div className="order-status-container">
+    <div className="container">
       <div className="main-content">
-        <div className="order-header">
+        <div className="header">
           <h2>Order Status</h2>
         </div>
 
-        <div className="order-table">
+        <div className="table">
           <div className="order-row header">
             <span>Order ID</span>
             <span>Date Created</span>

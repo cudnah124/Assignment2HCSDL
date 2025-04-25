@@ -1,0 +1,82 @@
+[
+    {
+        "id": "NC0001",
+        "name": "Cong ty TNHH Nguyen Lieu A",
+        "taxCode": "0123456789012",
+        "address": "10 Le Duan, Quan 1, Ho Chi Minh",
+        "phone": "0911111111",
+        "email": "nlieua@gmail.com"
+    },
+    {
+        "id": "NC0002",
+        "name": "Cong ty TNHH Nguyen Lieu B",
+        "taxCode": "1234567890123",
+        "address": "20 Tran Phu, Quan 2, Ho Chi Minh",
+        "phone": "0922222222",
+        "email": "nlieub@gmail.com"
+    },
+    {
+        "id": "NC0003",
+        "name": "Cong ty TNHH Nguyen Lieu C",
+        "taxCode": "2345678901234",
+        "address": "30 Nguyen Cong Tru, Quan 3, Ho Chi Minh",
+        "phone": "0933333333",
+        "email": "nlieuc@gmail.com"
+    },
+    {
+        "id": "NC0004",
+        "name": "Cong ty TNHH Nguyen Lieu D",
+        "taxCode": "3456789012345",
+        "address": "40 Vo Thi Sau, Quan 4, Ho Chi Minh",
+        "phone": "0944444444",
+        "email": "nlieud@gmail.com"
+    },
+    {
+        "id": "NC0005",
+        "name": "Cong ty TNHH Nguyen Lieu E",
+        "taxCode": "4567890123456",
+        "address": "50 Dinh Tien Hoang, Quan 5, Ho Chi Minh",
+        "phone": "0955555555",
+        "email": "nlieue@gmail.com"
+    },
+    {
+        "id": "NC0006",
+        "name": "Cong ty TNHH Nguyen Lieu F",
+        "taxCode": "5678901234567",
+        "address": "60 Le Van Sy, Quan 1, Ho Chi Minh",
+        "phone": "0966666666",
+        "email": "nlieuf@gmail.com"
+    },
+    {
+        "id": "NC0007",
+        "name": "Cong ty TNHH Nguyen Lieu G",
+        "taxCode": "6789012345678",
+        "address": "70 Tran Quoc Thao, Quan 2, Ho Chi Minh",
+        "phone": "0977777777",
+        "email": "nlieug@gmail.com"
+    },
+    {
+        "id": "NC0008",
+        "name": "Cong ty TNHH Nguyen Lieu H",
+        "taxCode": "7890123456789",
+        "address": "80 Nguyen Dinh Chieu, Quan 3, Ho Chi Minh",
+        "phone": "0988888888",
+        "email": "nlieuh@gmail.com"
+    },
+    {
+        "id": "NC0009",
+        "name": "Cong ty TNHH Nguyen Lieu I",
+        "taxCode": "8901234567890",
+        "address": "90 Vo Van Tan, Quan 4, Ho Chi Minh",
+        "phone": "0999999999",
+        "email": "nlieui@gmail.com"
+    },
+    {
+        "id": "NC0010",
+        "name": "Cong ty TNHH Nguyen Lieu K",
+        "taxCode": "9012345678901",
+        "address": "100 Dien Bien Phu, Quan 5, Ho Chi Minh",
+        "phone": "0900000001",
+        "email": "nlieuk@gmail.com"
+    }
+]

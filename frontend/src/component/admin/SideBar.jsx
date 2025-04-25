@@ -1,5 +1,5 @@
 // src/component/admin/Sidebar.jsx
-import React from 'react'; 
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 function Sidebar() {
@@ -25,19 +25,25 @@ function Sidebar() {
         <li>
           <NavLink to="/admin/drinkmanagement">
             <img src="/images/icon/dashboard.png" alt="Product icon" className="icon" />
-            Drinks Management
+            Drink Management
           </NavLink>
         </li>
         <li>
           <NavLink to="/admin/report">
             <img src="/images/icon/reports.png" alt="Sales icon" className="icon" />
-            Report 
+            Report
           </NavLink>
         </li>
         <li>
           <NavLink to="/admin/order">
             <img src="/images/icon/product.png" alt="Order icon" className="icon" />
             Order Management
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/admin/ingredient">
+            <img src="/images/icon/product.png" alt="Order icon" className="icon" />
+            Ingredient Management
           </NavLink>
         </li>
       </ul>

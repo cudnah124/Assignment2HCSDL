@@ -1,5 +1,5 @@
 import React, { useContext, useState} from "react";
-import '../styles/employeeManagement.css';
+import '../styles/format.css';  
 import { EmployeeContext } from "../context/EmployeeContext";
 
 
@@ -11,7 +11,6 @@ function EmployeeManage() {
   const [editingEmp, setEditingEmp] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [empToDelete, setEmpToDelete] = useState(null);
-
 
   console.log(employees);
 
@@ -49,12 +48,12 @@ function EmployeeManage() {
   }
 
   return (
-    <div className="employee-manage-container">
-      <div className="employee-header">
+    <div className="container">
+      <div className="header">
         <h2>Employee Management</h2>
       </div>
 
-      <div className="employee-table">
+      <div className="table">
         <div className="employee-row header">
           <span>ID</span>
           <span>Name</span>
@@ -137,7 +136,7 @@ function EmployeeManage() {
         <div className="popup-overlay">
           <div className="popup-content">
             <h3>Confirm Delete</h3>
-            <p>Are you sure you want to delete employee <b>{empToDelete?.name || "?"}</b>?</p>
+            <p>Are you sure you want to delete employee <b>{empToDelete.name}</b>?</p>
             <button onClick={handleDeleteConfirm}>Yes, Delete</button>
             <button onClick={() => setShowDeleteConfirm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
           </div>
