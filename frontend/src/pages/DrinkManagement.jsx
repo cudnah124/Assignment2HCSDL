@@ -21,9 +21,9 @@ function DrinkManage() {
     price: { S: 0, M: 0, L: 0 }
   });
 
-  const filteredDrinks = selectedCategory === "All" 
-  ? drinks 
-  : drinks.filter((drink) => drink.category === selectedCategory);
+  const filteredDrinks = selectedCategory === "All"
+    ? drinks
+    : drinks.filter((drink) => drink.category === selectedCategory);
 
 
   //Handle when click edit or delete button
@@ -53,7 +53,7 @@ function DrinkManage() {
       alert("Please provide a valid name and ID for the drink.");
       return;
     }
-  
+
     try {
       await updateDrinks(editingDrk);
       setEditingDrk(null); // Clear editing state after saving
@@ -70,7 +70,7 @@ function DrinkManage() {
     }
 
     console.log("Adding new drink:", newDrk);
-    
+
     try {
       await addDrinks(newDrk);
       setNewDrk({
@@ -85,7 +85,7 @@ function DrinkManage() {
       console.error("Failed to add drink:", error);
       alert("There was an error adding the drink.");
     }
-};
+  };
 
   return (
     <div className="drink-manage-container">
@@ -107,128 +107,128 @@ function DrinkManage() {
         </div>
 
         {/*Add button*/}
-        <button className="addDrink" onClick={() => setShowAddForm(true)} style={{marginTop: '20px'}}> + Add Drink</button>
+        <button className="addDrink" onClick={() => setShowAddForm(true)} style={{ marginTop: '20px' }}> + Add Drink</button>
 
         <div className="drink-list">
           {filteredDrinks
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map((drink) => (
-            <div className="drink-item" key={drink.id}>
-              <img src={images.find((image) => image.name === drink.name)?.image} alt={drink.name} className="drink-img" />
-              <span className="drink-name">{drink.name}</span>
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((drink) => (
+              <div className="drink-item" key={drink.id}>
+                <img src={images.find((image) => image.name === drink.name)?.image} alt={drink.name} className="drink-img" />
+                <span className="drink-name">{drink.name}</span>
 
-              <div className="drink-action-icons">
-                <img src="/images/icon/edit.png" alt="Edit" onClick={() => handleEditClick(drink)} />
-                <img src="/images/icon/delete.png" alt="Delete" onClick={() => handleDeleteClick(drink)} />
+                <div className="drink-action-icons">
+                  <img src="/images/icon/edit.png" alt="Edit" onClick={() => handleEditClick(drink)} />
+                  <img src="/images/icon/delete.png" alt="Delete" onClick={() => handleDeleteClick(drink)} />
 
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
       {/*Add Drink Popup */}
       {showAddForm && (
-  <div className="popup-overlay">
-    <div className="popup-content">
-      <h3>Add New Drink</h3>
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Add New Drink</h3>
 
-      <label>ID: </label>
-      <input
-        value={newDrk.id}
-        onChange={(e) => setNewDrk({ ...newDrk, id: e.target.value })}
-      />
-
-      <label>Name: </label>
-      <input
-        value={newDrk.name}
-        onChange={(e) => setNewDrk({ ...newDrk, name: e.target.value })}
-      />
-
-      <label>Category: </label>
-      <select
-        value={newDrk.category}
-        onChange={(e) =>
-          setNewDrk({
-            ...newDrk,
-            category: e.target.value,
-            price: e.target.value === 'Drink' ? { S: 0, M: 0, L: 0 } : 0
-          })
-        }
-      >
-        <option value="">-- Select --</option>
-        <option value="Drink">Drink</option>
-        <option value="Topping">Topping</option>
-      </select>
-
-      <label>Image: </label>
-      <input
-        value={newDrk.image}
-        onChange={(e) => setNewDrk({ ...newDrk, image: e.target.value })}
-      />
-
-      {newDrk.category === 'Drink' ? (
-        <>
-          <label>Price S: </label>
-          <input
-            type="number"
-            value={newDrk.price.S}
-            onChange={(e) =>
-              setNewDrk({
-                ...newDrk,
-                price: { ...newDrk.price, S: parseInt(e.target.value) || 0 }
-              })
-            }
-          />
-          <label>Price M: </label>
-          <input
-            type="number"
-            value={newDrk.price.M}
-            onChange={(e) =>
-              setNewDrk({
-                ...newDrk,
-                price: { ...newDrk.price, M: parseInt(e.target.value) || 0 }
-              })
-            }
-          />
-          <label>Price L: </label>
-          <input
-            type="number"
-            value={newDrk.price.L}
-            onChange={(e) =>
-              setNewDrk({
-                ...newDrk,
-                price: { ...newDrk.price, L: parseInt(e.target.value) || 0 }
-              })
-            }
-          />
-        </>
-        ) : newDrk.category === 'Topping' ? (
-          <>
-            <label>Price: </label>
+            <label>ID: </label>
             <input
-              type="number"
-              value={newDrk.price}
+              value={newDrk.id}
+              onChange={(e) => setNewDrk({ ...newDrk, id: e.target.value })}
+            />
+
+            <label>Name: </label>
+            <input
+              value={newDrk.name}
+              onChange={(e) => setNewDrk({ ...newDrk, name: e.target.value })}
+            />
+
+            <label>Category: </label>
+            <select
+              value={newDrk.category}
               onChange={(e) =>
                 setNewDrk({
                   ...newDrk,
-                  price: parseInt(e.target.value) || 0
+                  category: e.target.value,
+                  price: e.target.value === 'Drink' ? { S: 0, M: 0, L: 0 } : 0
                 })
               }
-            />
-          </>
-        ) : null}
+            >
+              <option value="">-- Select --</option>
+              <option value="Drink">Drink</option>
+              <option value="Topping">Topping</option>
+            </select>
 
-        <button onClick={handleAddSave}>Add</button>
-        <button
-          onClick={() => setShowAddForm(false)}
-          style={{ marginLeft: '10px' }}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  )}
+            <label>Image: </label>
+            <input
+              value={newDrk.image}
+              onChange={(e) => setNewDrk({ ...newDrk, image: e.target.value })}
+            />
+
+            {newDrk.category === 'Drink' ? (
+              <>
+                <label>Price S: </label>
+                <input
+                  type="number"
+                  value={newDrk.price.S}
+                  onChange={(e) =>
+                    setNewDrk({
+                      ...newDrk,
+                      price: { ...newDrk.price, S: parseInt(e.target.value) || 0 }
+                    })
+                  }
+                />
+                <label>Price M: </label>
+                <input
+                  type="number"
+                  value={newDrk.price.M}
+                  onChange={(e) =>
+                    setNewDrk({
+                      ...newDrk,
+                      price: { ...newDrk.price, M: parseInt(e.target.value) || 0 }
+                    })
+                  }
+                />
+                <label>Price L: </label>
+                <input
+                  type="number"
+                  value={newDrk.price.L}
+                  onChange={(e) =>
+                    setNewDrk({
+                      ...newDrk,
+                      price: { ...newDrk.price, L: parseInt(e.target.value) || 0 }
+                    })
+                  }
+                />
+              </>
+            ) : newDrk.category === 'Topping' ? (
+              <>
+                <label>Price: </label>
+                <input
+                  type="number"
+                  value={newDrk.price}
+                  onChange={(e) =>
+                    setNewDrk({
+                      ...newDrk,
+                      price: parseInt(e.target.value) || 0
+                    })
+                  }
+                />
+              </>
+            ) : null}
+
+            <button onClick={handleAddSave}>Add</button>
+            <button
+              onClick={() => setShowAddForm(false)}
+              style={{ marginLeft: '10px' }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit popup to edit Drink details */}
       {editingDrk && (

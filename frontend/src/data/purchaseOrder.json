@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "date": "2024-03-01",
+        "employeeId": "NV0001",
+        "supplierId": "NC0001",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 2,
+        "date": "2024-03-05",
+        "employeeId": "NV0002",
+        "supplierId": "NC0002",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 3,
+        "date": "2024-03-10",
+        "employeeId": "NV0003",
+        "supplierId": "NC0003",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 4,
+        "date": "2024-03-15",
+        "employeeId": "NV0004",
+        "supplierId": "NC0004",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 5,
+        "date": "2024-03-20",
+        "employeeId": "NV0005",
+        "supplierId": "NC0005",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 6,
+        "date": "2024-03-25",
+        "employeeId": "NV0006",
+        "supplierId": "NC0006",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 7,
+        "date": "2024-03-30",
+        "employeeId": "NV0007",
+        "supplierId": "NC0007",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 8,
+        "date": "2024-04-01",
+        "employeeId": "NV0008",
+        "supplierId": "NC0008",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 9,
+        "date": "2024-04-05",
+        "employeeId": "NV0009",
+        "supplierId": "NC0009",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    },
+    {
+        "id": 10,
+        "date": "2024-04-10",
+        "employeeId": "NV0010",
+        "supplierId": "NC0010",
+        "products": [
+            { "productId": "P001", "quantity": 10, "price": 50000 },
+            { "productId": "P002", "quantity": 5, "price": 30000 }
+        ]
+    }
+]

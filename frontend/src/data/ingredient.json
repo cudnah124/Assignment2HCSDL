@@ -1,0 +1,82 @@
+[
+    {
+        "id": "NL001",
+        "name": "Ca phe",
+        "description": "Ca phe nguyen chat",
+        "price": 100000.00,
+        "quantity": 50,
+        "unit": "kg"
+    },
+    {
+        "id": "NL002",
+        "name": "Sua tuoi",
+        "description": "Sua tuoi nguyen chat",
+        "price": 30000.00,
+        "quantity": 100,
+        "unit": "ml"
+    },
+    {
+        "id": "NL003",
+        "name": "Sua dac",
+        "description": "Sua dac nguyen chat",
+        "price": 25000.00,
+        "quantity": 80,
+        "unit": "ml"
+    },
+    {
+        "id": "NL004",
+        "name": "Duong",
+        "description": "Duong nguyen chat",
+        "price": 20000.00,
+        "quantity": 120,
+        "unit": "kg"
+    },
+    {
+        "id": "NL005",
+        "name": "Tra xanh",
+        "description": "Tra xanh nguyen chat",
+        "price": 80000.00,
+        "quantity": 60,
+        "unit": "kg"
+    },
+    {
+        "id": "NL006",
+        "name": "Tra den",
+        "description": "Tra den nguyen chat",
+        "price": 75000.00,
+        "quantity": 70,
+        "unit": "kg"
+    },
+    {
+        "id": "NL007",
+        "name": "Dau tay",
+        "description": "Dau tay tuoi",
+        "price": 60000.00,
+        "quantity": 40,
+        "unit": "kg"
+    },
+    {
+        "id": "NL008",
+        "name": "Cam",
+        "description": "Cam tuoi",
+        "price": 50000.00,
+        "quantity": 45,
+        "unit": "kg"
+    },
+    {
+        "id": "NL009",
+        "name": "Chanh",
+        "description": "Chanh tuoi",
+        "price": 40000.00,
+        "quantity": 55,
+        "unit": "kg"
+    },
+    {
+        "id": "NL010",
+        "name": "Bot nang",
+        "description": "Bot nang da dung MeiZan",
+        "price": 90000.00,
+        "quantity": 30,
+        "unit": "kg"
+    }
+]

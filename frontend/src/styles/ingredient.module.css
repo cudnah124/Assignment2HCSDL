@@ -1,0 +1,88 @@
+/* Global Flex Container */
+.container {
+  display: flex;
+  gap: 1.5rem; /* ~gap-6 */
+  padding: 1rem; /* ~p-4 */
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Adds space between header and the box */
+  display: block; /* Ensure the header is block-level */
+}
+
+/* Styling for the box containing the table */
+.box {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px; /* Adds space below the box */
+  display: block; /* Ensures box is also a block element */ 
+}
+
+/* Grid Header & Rows */
+.tableHeader {
+  display: grid;
+  margin-left: 10px;
+  grid-template-columns: 80px 130px 160px 100px 50px; 
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #ccc;
+  font-weight: 600; /* ~font-semibold */
+}
+
+.tableHeader2{
+  display: grid;
+  margin-left: 10px;
+  grid-template-columns:  100px 200px 150px 150px;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #ccc;
+  font-weight: 600; /* ~font-semibold */
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 60px 150px 150px 100px 50px;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fdfdfd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.tableRow2{
+  display: grid;
+  grid-template-columns: 100px 200px 150px 150px;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fdfdfd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon styling */
+.icon {
+  width: 1.25rem; /* ~w-5 */
+  height: 1.25rem; /* ~h-5 */
+}
+
+
+.popupTable { 
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.popupTable th, popupTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.popupTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}

@@ -9,11 +9,13 @@ import DrinkManagement from './pages/DrinkManagement';
 import EmployeeManagement from './pages/EmployeeManagement';
 import Report from './pages/Report';
 import Order from './pages/Order';
+import Ingredient from './pages/Ingredient';
 import Menu from './pages/Menu';
 import Voucher from './pages/Vouchers';
 import { OrderProvider } from './context/OrderContext';
 import { EmployeeProvider } from './context/EmployeeContext';
 import { DrinkProvider } from './context/DrinkContext';
+import { IngredientProvider } from './context/IngredientContext';
 
 function App() {
   return (
@@ -26,7 +28,9 @@ function App() {
         <Route path="/admin" element={
           <EmployeeProvider>
             <DrinkProvider>
-              <Admin />
+              <IngredientProvider>
+                <Admin />
+              </IngredientProvider>
             </DrinkProvider>
           </EmployeeProvider>
         }>
@@ -34,6 +38,7 @@ function App() {
           <Route path="employeemanagement" element={<EmployeeManagement />} />
           <Route path="report" element={<Report />} />
           <Route path="order" element={<Order />} />
+          <Route path="ingredient" element={<Ingredient />} />
         </Route>
 
         {/* Employee Route with Nested Routes */}
