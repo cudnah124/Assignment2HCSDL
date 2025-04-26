@@ -24,7 +24,7 @@ function Sidebar() {
         </li>
         <li>
           <NavLink to="/admin/drinkmanagement">
-            <img src="/images/icon/dashboard.png" alt="Product icon" className="icon" />
+            <img src="/images/icon/coffee-cup.png" alt="Product icon" className="icon" />
             Drink Management
           </NavLink>
         </li>
@@ -36,13 +36,13 @@ function Sidebar() {
         </li>
         <li>
           <NavLink to="/admin/order">
-            <img src="/images/icon/product.png" alt="Order icon" className="icon" />
+            <img src="/images/icon/package.png" alt="Order icon" className="icon" />
             Order Management
           </NavLink>
         </li>
         <li>
           <NavLink to="/admin/ingredient">
-            <img src="/images/icon/product.png" alt="Order icon" className="icon" />
+            <img src="/images/icon/dashboard.png" alt="Order icon" className="icon" />
             Ingredient Management
           </NavLink>
         </li>

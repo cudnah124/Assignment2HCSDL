@@ -4,13 +4,13 @@
 
  .side-nav {
      width: 250px;
-     height: 100%;
-     /*full viewport height */
+     height: 100%; 
      position: fixed;
      top: 0;
      left: 0;
      padding: 30px 20px;
-     background: #fdf6e3 
+     background: #fdf6e3 ;
+     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
  }
 
  .user {
@@ -18,8 +18,7 @@
      flex-direction: column;
      align-items: center;  
      font-size: 15px;
-     padding: 10px;
-     /*generate space around an element's content*/ 
+     padding: 10px; 
  }
 
  .user-img {
@@ -59,7 +58,7 @@
     border-radius: 5px;
  }
 
- .icon {
+ .icon { 
      width: 20px; 
      margin-right: 10px; 
  }
@@ -71,10 +70,11 @@
  }
 
  .navbar {
-    background-color: #d1d1d1;
-    color: rgb(63, 43, 6);
+    background-color: #66533a;
+    color: #fdf6e3;
     padding: 20px; 
     margin-left: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
   }
 
   .navbar-content {
@@ -89,4 +89,4 @@
 
   .logout-link {
     color: rgb(0, 0, 0); 
-  } 
+  }  

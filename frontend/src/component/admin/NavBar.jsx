@@ -17,7 +17,7 @@ function Navbar() {
     <div className="navbar">
       <div className="navbar-content">
         <h1 className="app-name">Coffee Store</h1>
-        <span className="logout-link" onClick={handleLogout} style={{ cursor: 'pointer'}}>Logout</span>
+        <span className="logout-link" onClick={handleLogout} style={{ cursor: 'pointer'}}><img src="/images/icon/exit.png" alt="Order icon" className="icon" /></span>
       </div>
     </div>
   );
