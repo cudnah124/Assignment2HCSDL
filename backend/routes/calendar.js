@@ -17,7 +17,7 @@ module.exports = (db) => {
       LEFT JOIN NV_Lam NVL ON CL.MaCa = NVL.MaCa
       LEFT JOIN NhanVien NV ON NVL.MaNV = NV.MaNV
       GROUP BY CL.MaCa, CL.NgayLam, CL.GioLam, CL.GioTan
-      ORDER BY CL.NgayLam ASC, CL.GioLam ASC
+      ORDER BY CL.NgayLam ASC, CL.GioLam ASC;
     `;
     try {
       const [results] = await db.query(sql);
@@ -30,26 +30,42 @@ module.exports = (db) => {
 
   // POST add new shift (thêm ca làm mới + phân công nhân viên)
   router.post('/', async (req, res) => {
-    const { NgayLam, GioLam, GioTan, MaNVs } = req.body; // MaNVs là array [ 'NV001', 'NV002' ]
+    const { NgayLam, GioLam, GioTan, MaNV } = req.body; 
     const connection = await db.getConnection();
     try {
       await connection.beginTransaction();
 
-      // Insert ca làm
       const [result] = await connection.query(
-        'INSERT INTO CaLam (NgayLam, GioLam, GioTan) VALUES (?, ?, ?)',
-        [NgayLam, GioLam, GioTan]
+        'SELECT MaCa FROM CaLam ORDER BY MaCa DESC LIMIT 1'
       );
-      const MaCa = result.insertId; // Lấy mã ca tự động
+      let MaCa;
+    
+    if (result.length === 0) {
+      // Nếu chưa có mã ca nào, bắt đầu từ "CA001"
+      MaCa = 'CA001';
+    } else {
+      // Tách phần số của mã ca (ví dụ: "CA005" -> "005")
+      const lastMaCa = result[0].MaCa;
+      const lastNumber = parseInt(lastMaCa.slice(2), 10);
+      const newNumber = lastNumber + 1;
 
-      // Insert phân công nhân viên vào ca
-      for (const MaNV of MaNVs) {
-        await connection.query(
-          'INSERT INTO NV_Lam (MaNV, MaCa) VALUES (?, ?)',
-          [MaNV, MaCa]
-        );
-      }
+      // Tạo mã ca mới theo định dạng "CAxxx"
+      MaCa = `CA${String(newNumber).padStart(3, '0')}`;
+    }
 
+
+    await connection.query(
+      'INSERT INTO CaLam (MaCa, NgayLam, GioLam, GioTan) VALUES (?, ?, ?, ?)',
+      [MaCa, NgayLam, GioLam, GioTan]
+    );
+
+    // Bước 3: Insert phân công nhân viên vào ca
+    // MaNV có thể là một mảng, nên cần phải thực hiện insert từng nhân viên vào bảng NV_Lam
+    
+    await connection.query(
+      'INSERT INTO NV_Lam (MaNV, MaCa) VALUES (?, ?)',
+      [MaNV, MaCa]
+    );
       await connection.commit();
       res.status(201).json({ message: 'Thêm ca làm thành công' });
     } catch (err) {
@@ -64,11 +80,14 @@ module.exports = (db) => {
   // PUT update a shift (chỉnh sửa thông tin ca + phân công lại nhân viên)
   router.put('/:id', async (req, res) => {
     const id = req.params.id; // MaCa
-    const { NgayLam, GioLam, GioTan, MaNVs } = req.body;
+    const { NgayLam, GioLam, GioTan, MaNV } = req.body;
     const connection = await db.getConnection();
     try {
       await connection.beginTransaction();
 
+      if (id === undefined) {
+        return res.status(400).json({ error: 'Mã ca làm không hợp lệ' });
+    }
       // Update thông tin ca làm
       await connection.query(
         'UPDATE CaLam SET NgayLam = ?, GioLam = ?, GioTan = ? WHERE MaCa = ?',
@@ -79,12 +98,10 @@ module.exports = (db) => {
       await connection.query('DELETE FROM NV_Lam WHERE MaCa = ?', [id]);
 
       // Thêm nhân viên mới
-      for (const MaNV of MaNVs) {
         await connection.query(
           'INSERT INTO NV_Lam (MaNV, MaCa) VALUES (?, ?)',
           [MaNV, id]
         );
-      }
 
       await connection.commit();
       res.json({ message: 'Cập nhật ca làm thành công' });

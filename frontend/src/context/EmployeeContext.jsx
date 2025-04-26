@@ -6,6 +6,7 @@ export const EmployeeContext = createContext();
 
 export const EmployeeProvider = ({ children }) => {
     const [employees, setEmployees] = useState([]);
+    const [shifts, setShifts] = useState([]);
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -25,7 +26,79 @@ export const EmployeeProvider = ({ children }) => {
         };
         fetchEmployees();
       }, []);
+      useEffect(() => {
+        const fetchShifts = async () => {
+          try {
+            const response = await axios.get('http://localhost:5000/api/calendar'); 
+            const data = response.data; // lấy dữ liệu JSON
+      
+            const formattedShifts = data.map((shift) => ({
+              id: shift.MaCa,
+              date: new Date(shift.NgayLam),
+              NhanVienLam: shift.NhanVienLam || null,  // Nếu không có nhân viên, gán null
+              GioLam: shift.GioLam,
+              GioTan: shift.GioTan,
+              details: `${shift.NhanVienLam ? shift.NhanVienLam : 'No employee assigned'} (${shift.GioLam} - ${shift.GioTan})`
+            }));
+            setShifts(formattedShifts);
+          } catch (error) {
+            console.error('Error fetching shifts:', error);
+          }
+        };
+      
+        fetchShifts();
+      }, []);
+    //Calendar
+    const addShift = async (newShift) => {
+        try {
+            console.log(newShift.date)
+            const shiftForDB = {
+                NgayLam: newShift.Ngay,
+                GioLam: newShift.GioLam,
+                GioTan: newShift.GioTan,
+                MaNV: newShift.MaNV // Array các MaNV
+            };
 
+            await axios.post('http://localhost:5000/api/calendar', shiftForDB);
+
+            setShifts(prev => [...prev, newShift]);
+            window.location.reload();
+        } catch (err) {
+            console.error('Lỗi thêm ca làm:', err);
+        }
+    };
+    
+    const updateShift = async (updateShift) => {
+        try {
+            const shiftForDB = {
+                NgayLam: updateShift.date.toISOString().split('T')[0],
+                GioLam: updateShift.GioLam,
+                GioTan: updateShift.GioTan,
+                MaNV: updateShift.MaNV,
+                MaCa: updateShift.id // Array các MaNV
+            };
+            
+            // Sửa lại URL để sử dụng MaCa thay vì MaNV
+            await axios.put(`http://localhost:5000/api/calendar/${updateShift.id}`, shiftForDB);
+            
+            // Cập nhật lại danh sách ca làm trong state
+            setShifts(prev =>
+                prev.map(shift => shift.id === updateShift.id ? { ...shift, ...updateShift } : shift)
+            );
+            window.location.reload();
+        } catch (err) {
+            console.error('Lỗi cập nhật ca làm:', err);
+        }
+    };
+
+    const deleteShift = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/calendar/${id}`);
+            setShifts(prev => prev.filter(shift => shift.id !== id));
+        } catch (err) {
+            console.error('Lỗi xóa ca làm:', err);
+        }
+    };
 
     //Add employee 
     const addEmployee = async (newEmp) => {
@@ -101,9 +174,13 @@ export const EmployeeProvider = ({ children }) => {
     return (
         <EmployeeContext.Provider value={{ 
             employees, 
+            shifts,
             addEmployee, 
             updateEmployee, 
-            deleteEmployee 
+            deleteEmployee ,
+            addShift,
+            updateShift,
+            deleteShift
         }}>
             {children}
         </EmployeeContext.Provider>

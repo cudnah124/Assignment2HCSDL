@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect, useRef} from "react";
 import '../styles/format.css';  
-import axios from 'axios';
+// import axios from 'axios';
 import { EmployeeContext } from "../context/EmployeeContext";
 
 
 function EmployeeManage() {
   //Use EmployeeContext
-  const { employees, addEmployee, updateEmployee, deleteEmployee } = useContext(EmployeeContext);
+  const { shifts, addShift, updateShift, deleteShift, employees, addEmployee, updateEmployee, deleteEmployee } = useContext(EmployeeContext);
   const [newEmp, setNewEmp] = useState({ id: '', name: '', phone: '', email: '', address: '' });
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingEmp, setEditingEmp] = useState(null);
@@ -15,30 +15,14 @@ function EmployeeManage() {
 
   //Calendar
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [shifts, setShifts] = useState([]); // Lưu ca làm của nhân viên
-  const [editShift, setEditShift] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [newShift, setNewShift] = useState({ MaNV: '', name: '', GioLam: '', GioTan: '', Ngay: '' });
+  const [showAddShiftForm, setShowAddShiftForm] = useState(false);
+  const [editingShift, setEditingShift] = useState(null)
+  const [ShiftToDelete, setShiftToDelete] = useState(null);
+  const [showShiftDeleteConfirm, setShowShiftDeleteConfirm] = useState(false);
   const datePickerRef = useRef(null);
-  useEffect(() => {
-    const fetchShifts = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/calendar'); 
-        const data = response.data; // lấy dữ liệu JSON
   
-        const formattedShifts = data.map((shift) => ({
-          id: shift.MaCa,
-          date: new Date(shift.NgayLam),
-          details: `${shift.NhanVienLam} (${shift.GioLam} - ${shift.GioTan})`
-        }));
-  
-        setShifts(formattedShifts);
-      } catch (error) {
-        console.error('Error fetching shifts:', error);
-      }
-    };
-  
-    fetchShifts();
-  }, []);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
@@ -65,17 +49,6 @@ function EmployeeManage() {
     return lastDay;
   };
 
-  const handleEditShift = (shift) => {
-    setEditShift(shift);
-  };
-  const handleSaveShift = () => {
-    // Lưu ca làm đã chỉnh sửa
-    const updatedShifts = shifts.map(shift => 
-      shift.id === editShift.id ? { ...shift, details: editShift.details } : shift
-    );
-    setShifts(updatedShifts);
-    setEditShift(null);  // Đóng form chỉnh sửa
-  };
   // Hàm để tạo các ngày trong tháng
   const generateCalendar = () => {
     const firstDay = getFirstDayOfMonth();
@@ -92,20 +65,46 @@ function EmployeeManage() {
     setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + delta)));
   };
 
-  // Hàm thêm ca làm
-  const addShift = (date) => {
-    const shiftDetails = prompt("Enter shift details (e.g. 9:00 AM - 5:00 PM):");
-    if (shiftDetails) {
-      const newShift = { date, details: shiftDetails };
-      setShifts([...shifts, newShift]);
-    }
+  const handleShiftEditClick = (shift) => {
+    setShowDatePicker(false);
+    setEditingShift(shift);
   };
+
+  const handleShiftDeleteClick = (shift) => {
+    setShiftToDelete(shift);
+    setShowShiftDeleteConfirm(true);
+  };
+  
+  const handleShiftDeleteConfirm = () => {
+    if (ShiftToDelete && ShiftToDelete.MaNV) {
+      deleteShift(ShiftToDelete.MaNV);
+    }
+    setShowShiftDeleteConfirm(false);
+    setShiftToDelete(null);
+  };
+  
+  //Handle updated info 
+  const handleShiftEditSave = () => {
+    updateShift(editingShift);
+    setEditingShift(null);
+  };
+
+  //Add new employee
+  const handleShiftAddSave = () => {
+    console.log(newShift)
+    if (newShift.MaNV && newShift.name) {
+      addShift(newShift);
+      setNewShift({ MaNV: '', name: '', GioLam: '', GioTan: '', Ngay: '' });
+      setShowAddShiftForm(false);
+    }
+  }
 
   //End Calender
 
 
   //Handle when click edit or delete button
   const handleEditClick = (emp) => {
+    setShowDatePicker(false);
     setEditingEmp(emp);
   };
 
@@ -232,6 +231,7 @@ function EmployeeManage() {
           </div>
         </div>
       )}
+
       {/* Lịch */}
       <div>
       <div className="calendar-header">
@@ -262,31 +262,168 @@ function EmployeeManage() {
             <div
               key={day.toString()}
               className="calendar-day"
-              onClick={() => addShift(day)}
+              onClick={() => {
+                setNewShift({
+                  ...newShift,
+                  Ngay: day.toLocaleDateString('en-CA'),  // Chuyển thành 'yyyy-mm-dd'
+                });
+                setShowAddShiftForm(true); // Hiển thị form thêm ca làm
+              }}
             >
               <span className="calendar-day-number">{day.getDate()}</span>
+
               {/* Hiển thị ca làm nếu có */}
-              {shifts.filter(shift => shift.date.toDateString() === day.toDateString()).map((shift, index) => (
-                <div key={index} className="shift-details"  onClick={(e) => { e.stopPropagation(); handleEditShift(shift); }}>
-                  {shift.details}
-                </div>
-              ))}
+              {shifts
+                .filter(shift => {
+                  // Kiểm tra nếu shift.date là một đối tượng Date hợp lệ
+                  return shift.date instanceof Date && !isNaN(shift.date) && shift.date.toDateString() === day.toDateString();
+                })
+                .map((shift, index) => (
+                  <div key={index} className="shift-details" style={{ display: 'flex', alignItems: 'center' }}>
+                    {/* Nội dung shift, click để edit */}
+                    <div 
+                      style={{ flex: 1, cursor: 'pointer' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShiftEditClick(shift);
+                      }}
+                    >
+                      {shift.NhanVienLam ? shift.details : 'No employee assigned'}
+                    </div>
+
+                    {/* Nút delete */}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShiftDeleteClick(shift); // mở popup confirm xóa
+                      }}
+                      style={{
+                        marginLeft: '5px',
+                        backgroundColor: 'red',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
             </div>
           ))}
         </div>
       </div>
       {/* Modal chỉnh sửa ca làm */}
-      {editShift && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+      {editingShift && (
+        <div className="editshift-overlay">
+          <div className="editshift-content">
             <h3>Edit Shift</h3>
-            <textarea
-              value={editShift.details}
-              onChange={(e) => setEditShift({ ...editShift, details: e.target.value })}
-              rows={3}
+
+            <label>Employee:</label>
+            <select
+              value={editingShift.MaNV || ''}
+              onChange={(e) => {
+                const selectedId = e.target.value;
+                const selectedEmp = employees.find(emp => emp.id === selectedId);
+                if (selectedEmp) {
+                  setEditingShift({
+                    ...editingShift,
+                    MaNV: selectedEmp.id,
+                    name: selectedEmp.name
+                  });
+                }
+              }}
+            >
+              <option value="">Select Employee</option>
+              {employees.map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.name}
+                </option>
+              ))}
+            </select>
+            <br />
+
+            <label>Start Time:</label>
+            <input
+              type="time"
+              value={editingShift.GioLam || ''}
+              onChange={(e) => setEditingShift({ ...editingShift, GioLam: e.target.value })}
             />
-            <button onClick={handleSaveShift}>Save</button>
-            <button onClick={() => setEditShift(null)} style={{ marginLeft: '10px' }}>Cancel</button>
+            <br />
+
+            <label>End Time:</label>
+            <input
+              type="time"
+              value={editingShift.GioTan || ''}
+              onChange={(e) => setEditingShift({ ...editingShift, GioTan: e.target.value })}
+            />
+            <br />
+
+            <button onClick={handleShiftEditSave}>Save</button>
+            <button onClick={() => setEditingShift(null)} style={{ marginLeft: '10px' }}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+    {showAddShiftForm && (
+        <div className="addshift-container">
+          <div className="addshift-overlay">
+            <div className="addshift-content">
+              <h3>Add Shift for {''}</h3>
+
+              
+              <label>Employee:</label>
+              <select
+                value={newShift.id}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const selectedEmp = employees.find(emp => emp.id === selectedId);
+                  if (selectedEmp) {
+                    setNewShift({
+                      ...newShift,
+                      MaNV: selectedEmp.id,
+                      name: selectedEmp.name
+                    });
+                  }
+                }}
+              >
+                <option value="">Select Employee</option>
+                {employees.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.name}
+                  </option>
+                ))}
+              </select><br />
+
+             
+              <label>Start Time:</label>
+              <input
+                type="time"
+                value={newShift.GioLam}
+                onChange={(e) => setNewShift({ ...newShift, GioLam: e.target.value })}
+              /><br />
+              <label>End Time:</label>
+              <input
+                type="time"
+                value={newShift.GioTan}
+                onChange={(e) => setNewShift({ ...newShift, GioTan: e.target.value })}
+              /><br />
+
+              <button onClick={handleShiftAddSave}>Save Shift</button>
+              <button onClick={() => setShowAddShiftForm(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showShiftDeleteConfirm && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+          <h3>Confirm Delete</h3>
+          <p>Are you sure you want to delete shift <b>{ShiftToDelete.name}</b>?</p>
+          <button onClick={handleShiftDeleteConfirm}>Yes, Delete</button>
+          <button onClick={() => setShowShiftDeleteConfirm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
           </div>
         </div>
       )}
