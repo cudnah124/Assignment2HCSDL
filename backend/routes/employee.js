@@ -16,9 +16,9 @@ module.exports = (db) => {
   MAX(DN.ThanhPho) AS ThanhPho,
   GROUP_CONCAT(DISTINCT SDT.SDT) AS SDT,
   GROUP_CONCAT(DISTINCT Email.Email) AS Email,
-  MAX(CL.NgayLam) AS NgayLam,
-  MAX(CL.GioLam) AS GioLam,
-  MAX(CL.GioTan) AS GioTan
+  MAX(DATE_FORMAT(CL.NgayLam, '%Y-%m-%d')) AS NgayLam,
+  MAX(DATE_FORMAT(CL.GioLam, '%Y-%m-%d')) AS GioLam,
+  MAX(DATE_FORMAT(CL.GioTan, '%Y-%m-%d')) AS GioTan
 FROM 
   NhanVien NV
 LEFT JOIN DiaChiNV DN ON NV.MaNV = DN.MaNV

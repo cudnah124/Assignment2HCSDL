@@ -174,3 +174,100 @@
 .popup-content button:nth-of-type(2):hover {
     background-color: #888;
 }
+
+/* Container cho lịch */
+.calendar-header {
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .calendar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .calendar-nav-button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .calendar-nav-button:hover {
+    background-color: #d6e4f0;
+    transform: scale(1.1);
+  }
+  
+  .calendar-nav-button:active {
+    background-color: #aacbe1;
+  }
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 cột cho 7 ngày trong tuần */
+    gap: 8px;
+    padding: 20px;
+    grid-auto-rows: minmax(100px, auto); /* Điều chỉnh chiều cao tự động */
+  }
+  
+  /* Các ngày trong lịch */
+  .calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    height: 100%;
+  }
+  
+  /* Hiển thị số ngày */
+  .calendar-day-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Đổi màu khi hover lên các ngày */
+  .calendar-day:hover {
+    background-color: #3498db;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Các ca làm hiển thị trong ngày */
+  .shift-details {
+    font-size: 12px;
+    color: #555;
+    margin-top: 5px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Tăng độ sáng khi hover lên ca làm */
+  .shift-details:hover {
+    opacity: 1;
+  }
+  
