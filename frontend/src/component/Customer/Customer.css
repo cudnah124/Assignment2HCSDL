@@ -20,16 +20,15 @@
     width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-  }
-  
+  } 
   /* Các nhóm input */
   .form-group {
-    margin-bottom: 15px;
-  }
+   margin-bottom: 15px;
+  } 
   
   /* Nút xác nhận */
   .submit-btn {
-    background-color: #28a745;
+    background-color: #462404;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -39,7 +38,7 @@
   
   /* Nút đóng */
   .close-btn {
-    background-color: #dc3545;
+    background-color: #9c9c9c;
     color: white;
     padding: 10px 20px;
     border: none;
