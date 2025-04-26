@@ -3,10 +3,11 @@
   background-color: #fff;
   padding: 24px;
   box-shadow: -2px 0 6px rgba(0, 0, 0, 0.05);
-  height: calc(100vh - 100px);  
+  height: 100hv;  
   position: fixed;
   right: 0; 
-  top: 100px;
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
 }
@@ -94,4 +95,11 @@
 }
 .quantity {
   padding: 5px;
+
+}
+
+.removeBtn,
+.quantityBtn {
+  border: none; 
+  background: none;
 }

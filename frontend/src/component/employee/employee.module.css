@@ -4,13 +4,12 @@
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    border-radius: 20px;
-    background-color: #f5d2b6;
+    justify-content: space-between; 
+    background-color: #ece0d1;
     padding: 20px;  
-    color: rgb(20, 14, 14);
-    margin:10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    color: #693f21 ; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-right: 380px;
 } 
 
 .topBar {
@@ -33,7 +32,7 @@
 }
 
 .logoutP {
-    color: rgb(0, 0, 0); 
+    margin-right: 10px; 
     cursor: pointer;
     margin-left: auto;
 } 
@@ -51,9 +50,7 @@
 } 
 
 .option {
-    padding: 10px 20px;
-    background-color: #f7f7f7;
-    margin-right: 380px;
+    padding: 10px; 
 }
 
 .option nav ul {
@@ -61,14 +58,14 @@
     list-style: none;
     margin: 0;
     padding: 10px 80px;
-    background-color: #f4f4f4;
+    background-color: #ffffff;
     justify-content: left;
     gap: 40px;
 }
 
 .option nav ul li a {
     text-decoration: none;
-    color: #2c3e50;
+    color: #624531;
     font-weight: bold;
 }
  

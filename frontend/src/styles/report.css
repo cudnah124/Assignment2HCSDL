@@ -31,15 +31,15 @@
   display: grid;
   grid-template-columns: 150px 100px 1fr 100px 100px 80px;
   align-items: center;
-  padding: 10px 15px;
+  padding: 10px 8px;
   background-color: #fdfdfd;
   border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .report-row.header {
-  background-color: #777676;
-  color: white;
+  background-color: #f2f2f2;
+  color: rgb(0, 0, 0);
   font-weight: bold;
 } 
  

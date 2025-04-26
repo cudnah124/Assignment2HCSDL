@@ -1,7 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom"; 
-import EF from "./employee.module.css";
-import logo from "./logo.jpg";
+import EF from "./employee.module.css"; 
 
 function EmployeeDashboard() {
 
@@ -19,10 +18,10 @@ function EmployeeDashboard() {
       {/* Header with Coffee Name and Logo */} 
       <div className={EF.header}>
         <div className={EF.topBar} >
-          <img src={logo} alt="Coffe logo" className={EF.logo} />
+          <img src="/images/icon/logo.jpg" alt="Coffe logo" className={EF.logo} />
           <div className={EF.coffeeName}>Coffee Store</div>
         </div>
-        <span className={EF.logoutP} onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</span>
+        <span className={EF.logoutP} onClick={handleLogout} style={{ cursor: 'pointer' }}> <img src="/images/icon/exit.png" alt="Order icon" className="icon" /></span>
       </div>
 
       {/* Navigation Bar */}
