@@ -12,6 +12,7 @@ import Order from './pages/Order';
 import Ingredient from './pages/Ingredient';
 import Menu from './pages/Menu';
 import Voucher from './pages/Vouchers';
+import OrderEmp from './pages/OrderEmp';
 import { OrderProvider } from './context/OrderContext';
 import { EmployeeProvider } from './context/EmployeeContext';
 import { DrinkProvider } from './context/DrinkContext';
@@ -51,6 +52,7 @@ function App() {
         }>
           <Route path="menu" element={<Menu />} /> {/* Menu được bọc trong DrinkProvider */}
           <Route path="voucher" element={<Voucher />} />
+          <Route path="order" element={<OrderEmp />} />
         </Route>
       </Routes>
     </Router>

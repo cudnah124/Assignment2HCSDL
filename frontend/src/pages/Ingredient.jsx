@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import '../styles/format.css';
 import ING from '../styles/ingredient.module.css';
 import { IngredientContext } from "../context/IngredientContext";
@@ -10,8 +10,7 @@ function Ingredient() {
         suppliers,
         addIngredient,
         updateIngredient,
-        deleteIngredient,
-        sortPurchaseOrdersByDate
+        deleteIngredient,  
     } = useContext(IngredientContext);
 
     const [newIngr, setNewIngr] = useState({ id: '', name: '', price: '', quantity: '', unit: '' });

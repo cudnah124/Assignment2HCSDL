@@ -65,37 +65,38 @@ function Customer({ onClose, onSubmit, total, orderItems }) {
   return (
     <div className="customer-modal">
       <div className="customer-modal-content">
-        <h2>Xác nhận thanh toán</h2>
-
+        <h2>Payment Confirm</h2> 
         <label>
           <input
+          style={{ marginRight: "5px" }}
             type="checkbox"
             checked={wantToInputCustomer}
             onChange={(e) => setWantToInputCustomer(e.target.checked)}
           />
-          Nhập thông tin khách hàng
+          Customer Details
         </label>
 
         {wantToInputCustomer && (
           <>
             <div className="form-group">
-              <label>Họ:</label>
-              <input type="text" value={firstname} onChange={(e) => setFirstName(e.target.value)} />
+              <label>Last Name:</label>
+              <input style={{ marginLeft: "5px" }} type="text" value={firstname} onChange={(e) => setFirstName(e.target.value)} />
             </div>
             <div className="form-group">
-              <label>Tên:</label>
-              <input type="text" value={lastname} onChange={(e) => setLastName(e.target.value)} />
+              <label>First Name:</label>
+              <input style={{ marginLeft: "5px" }} type="text" value={lastname} onChange={(e) => setLastName(e.target.value)} />
             </div>
             <div className="form-group">
-              <label>Số điện thoại:</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <label>Phone:</label>
+              <input style={{ marginLeft: "5px" }} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
           </>
         )}
 
         <div className="form-group">
-          <label>Tiền nhận</label>
+          <label>Received</label>
           <input
+            style={{ marginLeft: "5px" }}
             type="number"
             value={paidAmount}
             onChange={(e) => setPaidAmount(e.target.value)}
@@ -105,7 +106,7 @@ function Customer({ onClose, onSubmit, total, orderItems }) {
 
         {paidAmount && !isNaN(changeAmount) && (
           <div className="form-group">
-            <label>Tiền thối lại:</label>
+            <label>Change:</label>
             <div>{changeAmount.toLocaleString()} VND</div>
           </div>
         )}
@@ -116,9 +117,9 @@ function Customer({ onClose, onSubmit, total, orderItems }) {
           onClick={handleSubmit}
           disabled={loading}
         >
-          {loading ? 'Đang xử lý...' : 'Xác nhận'}
+          {loading ? 'Processing...' : 'Confirm'}
         </button>
-        <button className="close-btn" onClick={onClose}>Đóng</button>
+        <button className="close-btn" onClick={onClose}>Close</button>
       </div>
     </div>
   );

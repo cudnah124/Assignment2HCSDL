@@ -20,7 +20,7 @@ function EmployeeDashboard() {
       <div className={EF.header}>
         <div className={EF.topBar} >
           <img src={logo} alt="Coffe logo" className={EF.logo} />
-          <div className={EF.coffeeName}>Lord of the Ring</div>
+          <div className={EF.coffeeName}>Coffee Store</div>
         </div>
         <span className={EF.logoutP} onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</span>
       </div>
