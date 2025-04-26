@@ -111,7 +111,7 @@ function DrinkManage() {
 
         <div className="drink-list">
           {filteredDrinks
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort((a, b) => a.id.localeCompare(b.id))
             .map((drink) => (
               <div className="drink-item" key={drink.id}>
                 <img src={images.find((image) => image.name === drink.name)?.image} alt={drink.name} className="drink-img" />
@@ -296,11 +296,11 @@ function DrinkManage() {
                 <label>Price:</label>
                 <input
                   type="number"
-                  value={editingDrk.price.S} // Sử dụng giá của size S cho Topping
+                  value={editingDrk.price?.[""] || ""} // Sử dụng giá của size S cho Topping
                   onChange={(e) =>
                     setEditingDrk({
                       ...editingDrk,
-                      price: { ...editingDrk.price, S: parseInt(e.target.value) }
+                      price: {"":parseInt(e.target.value) }
                     })
                   }
                 />

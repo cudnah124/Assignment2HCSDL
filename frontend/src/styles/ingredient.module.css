@@ -12,7 +12,13 @@
   margin-bottom: 10px; /* Adds space between header and the box */
   display: block; /* Ensure the header is block-level */
 }
-
+input[type="date"] {
+  margin-top: 10px;
+  margin-left: 370px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
 /* Styling for the box containing the table */
 .box {
   border: 1px solid #ccc;

@@ -1,0 +1,75 @@
+const express = require('express');
+
+module.exports = (db) => {
+    const router = express.Router();
+
+    // Tạo đơn nhập hàng mới
+    router.post('/', async (req, res) => {
+        const { MaNV, MaNCC, items } = req.body;
+        const conn = await db.getConnection();
+        try {
+            await conn.beginTransaction();
+
+            const [result] = await conn.query(
+                `INSERT INTO DonNhapHang (MaNV, MaNCC) VALUES (?, ?)`,
+                [MaNV, MaNCC]
+            );
+
+            const MaDon = result.insertId; // ID đơn nhập mới
+
+            for (const item of items) {
+                await conn.query(
+                    `INSERT INTO GomDNH_NL (MaDon, MaNguyenLieu, SoLuong, GiaNhap)
+                     VALUES (?, ?, ?, ?)`,
+                    [MaDon, item.MaNguyenLieu, item.SoLuong, item.GiaNhap]
+                );
+            }
+
+            await conn.commit();
+            res.status(201).json({ message: 'Purchase order created successfully.', MaDon });
+        } catch (error) {
+            await conn.rollback();
+            console.error(error);
+            res.status(500).json({ error: 'Error creating purchase order.' });
+        } finally {
+            conn.release();
+        }
+    });
+
+    // Lấy tất cả đơn nhập hàng
+    router.get('/', async (req, res) => {
+        const sql = `
+                SELECT dnh.MaDon,  DATE_FORMAT(dnh.NgayNhap, '%Y-%m-%d') AS NgayNhap, dnh.MaNV, dnh.MaNCC, nv.Ten, ncc.TenNCC
+                FROM DonNhapHang dnh
+                LEFT JOIN NhanVien nv ON dnh.MaNV = nv.MaNV
+                LEFT JOIN NhaCungCap ncc ON dnh.MaNCC = ncc.MaNCC
+                ORDER BY dnh.NgayNhap DESC
+            `;
+            try {
+                const [results] = await db.query(sql);
+                res.json(results); // Trả kết quả dưới dạng JSON
+              } catch (err) {
+                console.error('Lỗi lấy menu:', err);
+                res.status(500).json({ error: 'Lỗi server' });
+              }
+    });
+
+    // Lấy chi tiết nguyên liệu của một đơn nhập
+    router.get('/:MaDon/items', async (req, res) => {
+        const { MaDon } = req.params;
+        try {
+            const [rows] = await db.query(`
+                SELECT gnl.MaNguyenLieu, nl.TenNguyenLieu, gnl.SoLuong, gnl.GiaNhap
+                FROM GomDNH_NL gnl
+                JOIN NguyenLieu nl ON gnl.MaNguyenLieu = nl.MaNguyenLieu
+                WHERE gnl.MaDon = ?
+            `, [MaDon]);
+            res.json(rows);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error fetching purchase order items.' });
+        }
+    });
+
+    return router;
+};

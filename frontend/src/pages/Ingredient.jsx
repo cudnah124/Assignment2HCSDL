@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import '../styles/format.css';
 import ING from '../styles/ingredient.module.css';
 import { IngredientContext } from "../context/IngredientContext";
@@ -8,6 +8,7 @@ function Ingredient() {
         ingredients,
         purchaseOrders,
         suppliers,
+        loading,
         addIngredient,
         updateIngredient,
         deleteIngredient,  
@@ -19,36 +20,98 @@ function Ingredient() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteIngr, setDeleteIngr] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [actionStatus, setActionStatus] = useState({ message: '', type: '' });
+    const [searchDate, setSearchDate] = useState('');
 
-    const handleDetailClick = (order) => setSelectedOrder(order);
+    const handleDetailClick = (order) => {
+        setSelectedOrder(order);
+    }
 
     const handleEditClick = (ingr) => setEditingIngr(ingr);
+
     const handleDeleteClick = (ingr) => {
         setDeleteIngr(ingr);
         setShowDeleteConfirm(true);
     };
-    const handleDeleteConfirm = () => {
-        if (deleteIngr?.id) deleteIngredient(deleteIngr.id);
+
+    const handleDeleteConfirm = async () => {
+        if (deleteIngr?.id) {
+            const result = await deleteIngredient(deleteIngr.id);
+            if (result.success) {
+                setActionStatus({ message: 'Ingredient deleted successfully!', type: 'success' });
+            } else {
+                setActionStatus({ message: `Failed to delete: ${result.error}`, type: 'error' });
+            }
+        }
         setShowDeleteConfirm(false);
         setDeleteIngr(null);
     };
-    const handleEditSave = () => {
-        updateIngredient(editingIngr);
-        setEditingIngr(null);
-    };
-    const handleAddSave = () => {
-        if (newIngr.id && newIngr.name) {
-            addIngredient(newIngr);
-            setNewIngr({ id: '', name: '', price: '', quantity: '', unit: '' });
-            setShowAddForm(false);
+
+    const handleEditSave = async () => {
+        // Convert string values to appropriate types
+        const updatedIngredient = {
+            ...editingIngr,
+            price: parseFloat(editingIngr.price),
+            quantity: parseInt(editingIngr.quantity, 10)
+        };
+
+        const result = await updateIngredient(updatedIngredient);
+        if (result.success) {
+            setActionStatus({ message: 'Ingredient updated successfully!', type: 'success' });
+            setEditingIngr(null);
+        } else {
+            setActionStatus({ message: `Failed to update: ${result.error}`, type: 'error' });
         }
     };
+
+    const handleAddSave = async () => {
+        if (newIngr.id && newIngr.name) {
+            // Convert string values to appropriate types
+            const ingredientToAdd = {
+                ...newIngr,
+                price: parseFloat(newIngr.price),
+                quantity: parseInt(newIngr.quantity, 10)
+            };
+
+            const result = await addIngredient(ingredientToAdd);
+            if (result.success) {
+                setActionStatus({ message: 'Ingredient added successfully!', type: 'success' });
+                setNewIngr({ id: '', name: '', price: '', quantity: '', unit: '' });
+                setShowAddForm(false);
+            } else {
+                setActionStatus({ message: `Failed to add: ${result.error}`, type: 'error' });
+            }
+        } else {
+            setActionStatus({ message: 'ID and Name are required!', type: 'error' });
+        }
+    };
+
+    // Clear status message after 3 seconds
+    useEffect(() => {
+        if (actionStatus.message) {
+            const timer = setTimeout(() => {
+                setActionStatus({ message: '', type: '' });
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [actionStatus]);
+
+    if (loading) return <div className="container">Loading ingredients...</div>;
+    // if (error) return <div className="container">Error: {error}</div>;
+
 
     return (
         <div className="container">
             <div className="header">
                 <h2>Ingredient Management</h2>
             </div>
+
+             {/* Status Message */}
+             {actionStatus.message && (
+                <div className={`status-message ${actionStatus.type}`}>
+                    {actionStatus.message}
+                </div>
+            )}
 
             <div className="table">
                 <div className="ingredient-row header">
@@ -85,9 +148,17 @@ function Ingredient() {
                         <label>Name:</label>
                         <input value={newIngr.name} onChange={(e) => setNewIngr({ ...newIngr, name: e.target.value })} /><br />
                         <label>Price:</label>
-                        <input value={newIngr.price} onChange={(e) => setNewIngr({ ...newIngr, price: e.target.value })} /><br />
+                        <input 
+                            type="number" 
+                            value={newIngr.price} 
+                            onChange={(e) => setNewIngr({ ...newIngr, price: e.target.value })} 
+                        /><br />
                         <label>Quantity:</label>
-                        <input value={newIngr.quantity} onChange={(e) => setNewIngr({ ...newIngr, quantity: e.target.value })} /><br />
+                        <input 
+                            type="number" 
+                            value={newIngr.quantity} 
+                            onChange={(e) => setNewIngr({ ...newIngr, quantity: e.target.value })} 
+                        /><br />
                         <label>Unit:</label>
                         <input value={newIngr.unit} onChange={(e) => setNewIngr({ ...newIngr, unit: e.target.value })} /><br />
 
@@ -106,9 +177,17 @@ function Ingredient() {
                         <label>Name:</label>
                         <input value={editingIngr.name} onChange={(e) => setEditingIngr({ ...editingIngr, name: e.target.value })} /><br />
                         <label>Price:</label>
-                        <input value={editingIngr.price} onChange={(e) => setEditingIngr({ ...editingIngr, price: e.target.value })} /><br />
+                        <input 
+                            type="number" 
+                            value={editingIngr.price} 
+                            onChange={(e) => setEditingIngr({ ...editingIngr, price: e.target.value })} 
+                        /><br />
                         <label>Quantity:</label>
-                        <input value={editingIngr.quantity} onChange={(e) => setEditingIngr({ ...editingIngr, quantity: e.target.value })} /><br />
+                        <input 
+                            type="number" 
+                            value={editingIngr.quantity} 
+                            onChange={(e) => setEditingIngr({ ...editingIngr, quantity: e.target.value })} 
+                        /><br />
                         <label>Unit:</label>
                         <input value={editingIngr.unit} onChange={(e) => setEditingIngr({ ...editingIngr, unit: e.target.value })} /><br />
 
@@ -141,7 +220,12 @@ function Ingredient() {
                         <span>EmployeeID</span>
                         <span>Supplier</span>
                     </div>
-                    {purchaseOrders.map((pur) => (
+                    <input
+                    type="date"
+                    value={searchDate}
+                    onChange={(e) => setSearchDate(e.target.value)}
+                    />
+                    {purchaseOrders.filter(pur => !searchDate || pur.date === searchDate).map((pur) => (
                         <div className={ING.tableRow} key={pur.id}>
                             <span>{pur.id}</span>
                             <span>{pur.date}</span>
