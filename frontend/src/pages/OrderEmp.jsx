@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import OrderSidebar from "../component/OrderSideBar";
-import styles from "../styles/orderEmp.module.css";
+import styles from "../styles/orderEmp.module.css"; 
 import { HiOutlineSortAscending , HiOutlineSortDescending } from "react-icons/hi";
 
 function OrderStatus() {
@@ -120,8 +120,8 @@ const handleSortById = () => {
             }
         }, [actionStatus]);
     return (
-        <div className={styles.container}>
-            <div className={styles.mainContent}>
+        <div className={styles.container}  >
+            <div className={styles.mainContent} >
                 <div className={styles.header}>
                     <h2>Order Status</h2>
                 </div>

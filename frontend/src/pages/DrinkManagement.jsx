@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
-import '../styles/drinkManagement.css';
-import images from '../data/drink.json';
+import '../styles/drinkManagement.css'; 
 import { DrinkContext } from "../context/DrinkContext";
 
 function DrinkManage() {

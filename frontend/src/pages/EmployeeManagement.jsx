@@ -370,12 +370,11 @@ function EmployeeManage() {
         <div className="addshift-container">
           <div className="addshift-overlay">
             <div className="addshift-content">
-              <h3>Add Shift for {''}</h3>
-
-              
+              <h3>Add Shift for {''}</h3> 
               <label>Employee:</label>
               <select
                 value={newShift.id}
+                className="addshift"
                 onChange={(e) => {
                   const selectedId = e.target.value;
                   const selectedEmp = employees.find(emp => emp.id === selectedId);
@@ -401,17 +400,20 @@ function EmployeeManage() {
               <input
                 type="time"
                 value={newShift.GioLam}
+                className="addshift"
                 onChange={(e) => setNewShift({ ...newShift, GioLam: e.target.value })}
               /><br />
               <label>End Time:</label>
               <input
+                style={{marginLeft: '10px'}}
                 type="time"
                 value={newShift.GioTan}
+                className="addshift"
                 onChange={(e) => setNewShift({ ...newShift, GioTan: e.target.value })}
               /><br />
 
-              <button onClick={handleShiftAddSave}>Save Shift</button>
-              <button onClick={() => setShowAddShiftForm(false)}>Cancel</button>
+              <button className="addshift-btn-save" onClick={handleShiftAddSave}>Save Shift</button>
+              <button className="addshift-btn-cancel" onClick={() => setShowAddShiftForm(false)} style={{marginLeft: '10px'}}>Cancel</button>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom"; 
+import { NavLink, Outlet, useNavigate } from "react-router-dom";  
+import backgroundImage from './background.png';
 import EF from "./employee.module.css"; 
 
 function EmployeeDashboard() {
@@ -16,8 +17,8 @@ function EmployeeDashboard() {
   return (
     <div>
       {/* Header with Coffee Name and Logo */} 
-      <div className={EF.header}>
-        <div className={EF.topBar} >
+      <div className={EF.header} style={{ backgroundImage: `url(${backgroundImage})` }} >
+        <div className={EF.topBar}  >
           <img src="/images/icon/logo.jpg" alt="Coffe logo" className={EF.logo} />
           <div className={EF.coffeeName}>Coffee Store</div>
         </div>
@@ -25,7 +26,7 @@ function EmployeeDashboard() {
       </div>
 
       {/* Navigation Bar */}
-      <div className={EF.option}>
+      <div className={EF.option}  style={{ backgroundImage: `url(${backgroundImage})` }}>
         <nav>
           <ul>
             <li><NavLink to="menu" className={({ isActive }) => isActive ? EF.active : ""}>Menu</NavLink></li>

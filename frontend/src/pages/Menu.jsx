@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import MN from '../styles/menu.module.css';
+import backgroundImage from './background.png';
 import OrderSidebar from "../component/OrderSideBar";
 import { useOrder } from "../context/OrderContext"; 
 import { DrinkContext } from "../context/DrinkContext";
@@ -52,9 +53,9 @@ function Menu() {
   });
 
   return (
-    <div className={MN.drinkManageContainer}>
-      <div className={MN.mainContent}>
-        <div className={MN.drinkHeader}>
+    <div className={MN.drinkManageContainer}  style={{ backgroundImage: `url(${backgroundImage})` }} > 
+      <div className={MN.mainContent}  >
+        <div className={MN.drinkHeader} >
           <h2>Menu</h2>
         </div>
 
