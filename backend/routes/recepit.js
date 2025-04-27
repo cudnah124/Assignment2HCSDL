@@ -9,34 +9,24 @@ module.exports = (db) => {
             dh.MaDonHang,
             dh.MaNV,
             dh.TrangThai,
-    
             GROUP_CONCAT(DISTINCT 
                 CONCAT(m1.TenMon, ' (', gnu.KichThuoc, ') x', gnu.SoLuong)
                 SEPARATOR ', '
             ) AS NuocUong,
-    
             GROUP_CONCAT(DISTINCT 
                 CONCAT(m2.TenMon, ' x', gt.SoLuong)
                 SEPARATOR ', '
             ) AS Topping,
-    
-            CAST(
-                IFNULL(SUM(gnu.SoLuong * ktd.Gia), 0) +
-                IFNULL(SUM(gt.SoLuong * t.Gia), 0)
-                AS DECIMAL(10,2)
-            ) AS TongTien,
-    
+            -- Gọi function để tính tổng tiền
+            GetOrderTotal(dh.MaDonHang) AS TongTien,
             DATE_FORMAT(dh.NgayGioTao, '%Y-%m-%dT%H:%i:%s') AS NgayGioTao
-    
         FROM DonHang dh
         JOIN GomDH_NuocUong gnu ON dh.MaDonHang = gnu.MaDonHang
         LEFT JOIN KichThuocDoUong ktd ON gnu.MaMon = ktd.MaMon AND gnu.KichThuoc = ktd.KichThuoc
         LEFT JOIN Menu m1 ON gnu.MaMon = m1.MaMon
-    
         LEFT JOIN GomDH_Topping gt ON dh.MaDonHang = gt.MaDonHang
         LEFT JOIN Topping t ON gt.MaMon = t.MaMon
         LEFT JOIN Menu m2 ON gt.MaMon = m2.MaMon
-    
         GROUP BY dh.MaDonHang, dh.MaNV, dh.TrangThai, dh.NgayGioTao
         ORDER BY dh.NgayGioTao DESC;
         `;
@@ -55,7 +45,7 @@ module.exports = (db) => {
 
     // API POST thêm đơn hàng mới
     router.post('/', async (req, res) => {
-        const { MaNV, TrangThai, NuocUong, Topping, NgayGioTao } = req.body;
+        const { MaKH, MaNV, TrangThai, NuocUong, Topping, NgayGioTao } = req.body;
 
         // Kiểm tra và ép kiểu các trường dữ liệu
         const employeeId = String(MaNV).trim();  // Mã nhân viên cần là string
@@ -93,8 +83,8 @@ module.exports = (db) => {
 
             // Bước 2: Thêm đơn hàng vào bảng DonHang
             const [insertOrderResult] = await connection.query(
-                `INSERT INTO DonHang (MaDonHang, MaNV, TrangThai, NgayGioTao) VALUES (?, ?, ?, ?)`,
-                [newOrderId, employeeId, status, orderDate]
+                `INSERT INTO DonHang (MaDonHang, MaNV, TrangThai, MaKH, NgayGioTao) VALUES (?, ?, ?, ?, ?)`,
+                [newOrderId, employeeId, status, MaKH, orderDate]
             );
 
             // Bước 3: Thêm nước uống vào bảng GomDH_NuocUong

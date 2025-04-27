@@ -31,16 +31,36 @@ function Customer({ onClose, onSubmit, total, orderItems }) {
       });
   
       // If a valid shift is found, get the MaNV (employee ID), otherwise default to 'AAAA'
-      const MaNV = shift ? shift.MaNV : 'NV0001';  // Default to 'AAAA' if no shift is found
-  
+      const MaNV = shift ? shift.MaNV : 'NV0001';  // Default MaNV
+      let MaKH = null;
+
       // Step 3: If there's customer info to input, save it to the DB
       if (wantToInputCustomer) {
         const customerData = { firstname, lastname, phone };
-        await axios.post('http://localhost:5000/api/customer', customerData);
+
+        try {
+          const response = await axios.post('http://localhost:5000/api/customer', customerData);
+
+          if (response.data && response.data.MaKH) {
+            MaKH = response.data.MaKH;  // Lấy MaKH được trả về
+
+            // Kiểm tra dựa vào message API trả về
+            if (response.data.message === 'Số điện thoại đã tồn tại.') {
+              alert(`Khách hàng đã đăng ký thành viên.\n(Mã KH: ${MaKH})`);
+            } else {
+              alert(`Khách hàng mới, chưa đăng ký thành viên.\n(Mã KH: ${MaKH})`);
+            }
+          }
+        } catch (error) {
+          console.error('Lỗi khi thêm khách hàng:', error);
+          alert('Đã xảy ra lỗi khi thêm khách hàng.');
+          throw error; 
+        }
       }
   
       // Step 4: Prepare the order payload
       const orderPayload = {
+        MaKH: MaKH,
         MaNV: MaNV,  // Use the employee ID (MaNV) from the shift (or 'AAAA' if no shift)
         TrangThai: status,  // Order status
         NgayGioTao: now.toISOString(),  // Current timestamp
