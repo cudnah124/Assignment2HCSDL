@@ -84,13 +84,11 @@ function Menu() {
 
         <div className={MN.drinkList}>
           {filteredDrinks.map((drink) => {
-            const drinkImage = images.find((image) => image.name === drink.name)?.image;
-
             return (
               <div className={MN.drinkItem} key={drink.id}>
                 {/* Sử dụng ảnh từ drinkImage nếu có, nếu không thì dùng ảnh mặc định */}
                 <img
-                  src={drinkImage || drink.image}
+                  src={`/images/drinks/${drink.id}.jpg`}
                   alt={drink.name}
                   className={MN.drinkImg}
                 />

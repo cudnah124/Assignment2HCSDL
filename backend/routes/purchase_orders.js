@@ -7,6 +7,7 @@ module.exports = (db) => {
     router.post('/', async (req, res) => {
         const { MaNV, MaNCC, items } = req.body;
         const conn = await db.getConnection();
+        console.log(req.body)
         try {
             await conn.beginTransaction();
 
@@ -92,6 +93,42 @@ module.exports = (db) => {
             conn.release();
         }
         
+    });
+    router.put('/:MaDon', async (req, res) => {
+        const { 
+            id ,employeeId, supplierId
+            , products } = req.body;
+        const conn = await db.getConnection();
+        try {
+            await conn.beginTransaction();
+    
+            // Cập nhật đơn nhập hàng chính
+            await conn.query(
+                `UPDATE DonNhapHang SET MaNV = ?, MaNCC = ? WHERE MaDon = ?`,
+                [employeeId, supplierId, id]
+            );
+    
+            // Xóa các chi tiết nguyên liệu cũ của đơn nhập hàng này trước
+            await conn.query(`DELETE FROM GomDNH_NL WHERE MaDon = ?`, [id]);
+    
+            // Thêm các chi tiết nguyên liệu mới vào (hoặc cập nhật)
+            for (const product of products) {
+                await conn.query(
+                    `INSERT INTO GomDNH_NL (MaDon, MaNguyenLieu, SoLuong, GiaNhap)
+                     VALUES (?, ?, ?, ?)`,
+                    [id, product.productId, product.quantity, product.price]
+                );
+            }
+
+            await conn.commit();
+            res.status(200).json({ message: 'Purchase order updated successfully.' });
+        } catch (error) {
+            await conn.rollback();
+            console.error(error);
+            res.status(500).json({ error: 'Error updating purchase order.' });
+        } finally {
+            conn.release();
+        }
     });
 
     return router;

@@ -13,14 +13,28 @@ function Ingredient() {
         addPurchaseOrder,
         addSupplier,
         updateIngredient,
+        updatePurchaseOrder,
         deletePurchaseOrder,
         deleteSupplier,
         deleteIngredient,  
     } = useContext(IngredientContext);
 
     const [newIngr, setNewIngr] = useState({ id: '', name: '', price: '', quantity: '', unit: '',supplier_id: ''});
+    const [newSupplier, setNewSupplier] = useState({
+        TenNCC: '',         // Supplier Name
+        MaSoThue: '',       // Tax Code
+        addresses: [],      // Array to hold addresses
+        phones: [],         // Array to hold phone numbers
+        emails: []          // Array to hold email addresses
+    });
+    const [newPur, setNewPur] = useState({
+        MaNV: '',
+        MaNCC: '',
+        items: [],
+    });
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingIngr, setEditingIngr] = useState(null);
+    const [editingPur, setEditingPur] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteIngr, setDeleteIngr] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -33,16 +47,7 @@ function Ingredient() {
     const [deletePur, setDeletePur] = useState(null);
     const [showDeletePurConfirm, setShowDeletePurConfirm] = useState(false);
 
-     // For adding a new purchase order and supplier
-     const [newPurchaseOrder, setNewPurchaseOrder] = useState({ date: '', employeeId: '', supplierId: '' });
-     const [newSupplier, setNewSupplier] = useState({
-        TenNCC: '',         // Supplier Name
-        MaSoThue: '',       // Tax Code
-        addresses: [],      // Array to hold addresses
-        phones: [],         // Array to hold phone numbers
-        emails: []          // Array to hold email addresses
-    });
-
+     
 
       // Handling purchase order and supplier form visibility
     const [showAddPurchaseOrderForm, setShowAddPurchaseOrderForm] = useState(false);
@@ -73,13 +78,53 @@ function Ingredient() {
         setShowDeletePurConfirm(false);
         setDeletePur(null);
     };
-
-
-    const handleDetailClick = (order) => {
-        setSelectedOrder(order);
-    }
+    const handlePurAddSave = async () => {
+        if (!newPur.MaNV || !newPur.MaNCC) {
+            setActionStatus({ message: 'Employee ID (MaNV) and Supplier ID (MaNCC) are required!', type: 'error' });
+            return;
+        }
     
+        if (newPur.items.length === 0) {
+            setActionStatus({ message: 'At least one item must be added!', type: 'error' });
+            return;
+        }
+    
+        try {
+            const response = await addPurchaseOrder(newPur);
+    
+            if (response && response.MaDon) {
+                setActionStatus({ message: 'Purchase Order added successfully!', type: 'success' });
+                setShowAddPurchaseOrderForm(false);  // Đóng popup
+                setNewPur({ MaNV: '', MaNCC: '', items: [] }); // Reset form
+                // Nếu bạn có list purchase orders thì nhớ cập nhật list luôn ở đây.
+            } else {
+                setActionStatus({ message: 'Failed to add Purchase Order.', type: 'error' });
+            }
+        } catch (error) {
+            console.error('Error saving purchase order:', error);
+            setActionStatus({ message: 'An error occurred while saving.', type: 'error' });
+        }
+    };
+    const handlePurEditSave = async () => {
+        // Convert string values to appropriate types
+        const updatedPurchaseOrder = {
+            ...editingPur,
+            price: parseFloat(editingPur.price),
+            quantity: parseInt(editingPur.quantity, 10)
+        };
 
+        const result = await updatePurchaseOrder(updatedPurchaseOrder);
+        if (result) {
+            setActionStatus({ message: 'PurchaseOrder updated successfully!', type: 'success' });
+            setEditingPur(null);
+        } else {
+            setActionStatus({ message: `Failed to update: ${result.error}`, type: 'error' });
+        }
+    };
+    
+    const handlePurEditClick = (pur) => { 
+        setEditingPur(pur)
+    };
     const handleEditClick = (ingr) => setEditingIngr(ingr);
 
 
@@ -148,17 +193,6 @@ function Ingredient() {
         }
     };
 
-     // Add new purchase order
-     const handleAddPurchaseOrderSave = async () => {
-        const result = await addPurchaseOrder(newPurchaseOrder); // Add your API call logic
-        if (result.success) {
-            setActionStatus({ message: 'Purchase Order added successfully!', type: 'success' });
-            setNewPurchaseOrder({ date: '', employeeId: '', supplierId: '' });
-            setShowAddPurchaseOrderForm(false);
-        } else {
-            setActionStatus({ message: `Failed to add Purchase Order: ${result.error}`, type: 'error' });
-        }
-    };
 
     // Add new supplier
     const handleAddSupplierSave = async () => {
@@ -282,23 +316,6 @@ function Ingredient() {
                     </div>
                 </div>
             )}
-            {/* Add Purchase Order Form */}
-            {showAddPurchaseOrderForm && (
-                <div className="popup-overlay">
-                    <div className="popup-content">
-                        <h3>Add New Purchase Order</h3>
-                        <label>Date:</label>
-                        <input type="date" value={newPurchaseOrder.date} onChange={(e) => setNewPurchaseOrder({ ...newPurchaseOrder, date: e.target.value })} /><br />
-                        <label>Employee ID:</label>
-                        <input value={newPurchaseOrder.employeeId} onChange={(e) => setNewPurchaseOrder({ ...newPurchaseOrder, employeeId: e.target.value })} /><br />
-                        <label>Supplier ID:</label>
-                        <input value={newPurchaseOrder.supplierId} onChange={(e) => setNewPurchaseOrder({ ...newPurchaseOrder, supplierId: e.target.value })} /><br />
-                        <button onClick={handleAddPurchaseOrderSave}>Add</button>
-                        <button onClick={() => setShowAddPurchaseOrderForm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
-                    </div>
-                </div>
-            )}
-
             {/* Add Supplier Form */}
             {showAddSupplierForm && (
                 <div className="popup-overlay">
@@ -422,28 +439,17 @@ function Ingredient() {
                 </div>
             )}
 
-            {/* Delete Confirmation */}
-            {showDeletePurConfirm && (
-                <div className="popup-overlay">
-                    <div className="popup-content">
-                        <h3>Confirm Delete</h3>
-                        <p>Are you sure you want to delete PurchaseOrder <b>{deletePur.name}</b>?</p>
-                        <button onClick={handleDeletePurConfirm}>Yes, Delete</button>
-                        <button onClick={() => setShowDeletePurConfirm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
-                    </div>
-                </div>
-            )}
+            
 
 
-            {/* Purchase Orders and Suppliers Section */}
+            {/* Purchase Orders Section */}
             <div className={ING.container}>
                 <div className={ING.box}>
                     <h2 className={ING.sectionTitle}>PURCHASE ORDER</h2>
                     <button onClick={() => setShowAddPurchaseOrderForm(true)}>Add Purchase</button>
                     <div className={ING.tableHeader}>
                         <span>ID</span>
-                        <span>Date
-                        </span>
+                        <span>Date</span>
                         <span>EmployeeID</span>
                         <span>Supplier</span>
                     </div>
@@ -452,7 +458,8 @@ function Ingredient() {
                     value={searchDate}
                     onChange={(e) => setSearchDate(e.target.value)}
                     />
-                    {purchaseOrders.filter(pur => !searchDate || pur.date === searchDate).map((pur) => (
+                    {purchaseOrders.filter(pur => !searchDate || pur.date === searchDate)
+                    .sort((b, a) => a.id - b.id).map((pur) => (
                         <div className={ING.tableRow} key={pur.id}>
                             <span>{pur.id}</span>
                             <span>{pur.date}</span>
@@ -460,9 +467,9 @@ function Ingredient() {
                             <span>{pur.supplierId}</span>
                             <span className="action-icons">
                                 <img
-                                    src="/images/icon/edit.png"
-                                    alt="Detail"
-                                    onClick={() => handleDetailClick(pur)}
+                                src="/images/icon/edit.png"
+                                alt="Detail"
+                                onClick={() => handlePurEditClick(pur)}
                                 />
                                 <img
                                 src="/images/icon/delete.png"
@@ -472,8 +479,179 @@ function Ingredient() {
                             </span>
                         </div>
                     ))}
-
                 </div>
+                    {showAddPurchaseOrderForm && (
+                            <div className="popup-overlay">
+                                <div className="popup-content">
+                                <h3>Add New Purchase Order</h3>
+
+                                <label>Employee ID (MaNV):</label>
+                                <input
+                                    value={newPur.MaNV}
+                                    onChange={(e) => setNewPur({ ...newPur, MaNV: e.target.value })}
+                                /><br />
+
+                                <label>Supplier ID (MaNCC):</label>
+                                <input
+                                    value={newPur.MaNCC}
+                                    onChange={(e) => setNewPur({ ...newPur, MaNCC: e.target.value })}
+                                /><br />
+
+                                <h4>Items:</h4>
+                                {newPur.items.map((item, index) => (
+                                    <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc' }}>
+                                    <label>Material ID (MaNguyenLieu):</label>
+                                    <input
+                                        value={item.MaNguyenLieu}
+                                        onChange={(e) => {
+                                        const updatedItems = [...newPur.items];
+                                        updatedItems[index].MaNguyenLieu = e.target.value;
+                                        setNewPur({ ...newPur, items: updatedItems });
+                                        }}
+                                    /><br />
+
+                                    <label>Quantity (SoLuong):</label>
+                                    <input
+                                        type="number"
+                                        value={item.SoLuong}
+                                        onChange={(e) => {
+                                        const updatedItems = [...newPur.items];
+                                        updatedItems[index].SoLuong = e.target.value;
+                                        setNewPur({ ...newPur, items: updatedItems });
+                                        }}
+                                    /><br />
+
+                                    <label>Import Price (GiaNhap):</label>
+                                    <input
+                                        type="number"
+                                        value={item.GiaNhap}
+                                        onChange={(e) => {
+                                        const updatedItems = [...newPur.items];
+                                        updatedItems[index].GiaNhap = e.target.value;
+                                        setNewPur({ ...newPur, items: updatedItems });
+                                        }}
+                                    /><br />
+                                    </div>
+                                ))}
+
+                                <button
+                                    onClick={() => setNewPur({
+                                    ...newPur,
+                                    items: [...newPur.items, { MaNguyenLieu: '', SoLuong: '', GiaNhap: '' }]
+                                    })}
+                                >
+                                    Add Item
+                                </button>
+                                <br /><br />
+                                <button onClick={handlePurAddSave}>Save Purchase Order</button>
+                                <button onClick={() => {
+                                    setShowAddPurchaseOrderForm(false);  // Đóng form "Add Purchase Order"
+                                    setNewPur({ MaNV: '', MaNCC: '', items: [] });  // Reset dữ liệu trong form
+                                }} style={{ marginLeft: '10px' }}>
+                                    Cancel
+                                </button>
+                                </div>
+                            </div>
+                            )}
+                   {editingPur && (
+                        <div className="popup-overlay">
+                            <div className="popup-content">
+                                <h3>Edit Purchase Order</h3>
+
+                                {/* Chỉnh sửa mã nhân viên (MaNV) */}
+                                <label>Employee ID (MaNV):</label>
+                                <input
+                                    value={editingPur.employeeId}
+                                    onChange={(e) => setEditingPur({ ...editingPur, employeeId: e.target.value })}
+                                /><br />
+
+                                {/* Chỉnh sửa mã nhà cung cấp (MaNCC) */}
+                                <label>Supplier ID (MaNCC):</label>
+                                <input
+                                    value={editingPur.supplierId}
+                                    onChange={(e) => setEditingPur({ ...editingPur, supplierId: e.target.value })}
+                                /><br />
+
+                                <h4>Items:</h4>
+                                {/* Hiển thị danh sách nguyên liệu trong đơn hàng */}
+                                {editingPur.products.map((product, index) => (
+                                    <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc' }}>
+                                        {/* Chỉnh sửa mã nguyên liệu (MaNguyenLieu) */}
+                                        <label>Material ID (MaNguyenLieu):</label>
+                                        <input
+                                            value={product.productId}
+                                            onChange={(e) => {
+                                                const updatedItems = [...editingPur.products];
+                                                updatedItems[index].productId = e.target.value;
+                                                setEditingPur({ ...editingPur, products: updatedItems });
+                                            }}
+                                        /><br />
+
+                                        {/* Chỉnh sửa số lượng (SoLuong) */}
+                                        <label>Quantity (SoLuong):</label>
+                                        <input
+                                            type="number"
+                                            value={product.quantity}
+                                            onChange={(e) => {
+                                                const updatedItems = [...editingPur.products];
+                                                updatedItems[index].quantity = e.target.value;
+                                                setEditingPur({ ...editingPur, products: updatedItems });
+                                            }}
+                                        /><br />
+
+                                        {/* Chỉnh sửa giá nhập (GiaNhap) */}
+                                        <label>Import Price (GiaNhap):</label>
+                                        <input
+                                            type="number"
+                                            value={product.price}
+                                            onChange={(e) => {
+                                                const updatedItems = [...editingPur.products];
+                                                updatedItems[index].price = e.target.value;
+                                                setEditingPur({ ...editingPur, products: updatedItems });
+                                            }}
+                                        /><br />
+                                    </div>
+                                ))}
+
+                                {/* Button để thêm một item mới */}
+                                <button
+                                    onClick={() => setEditingPur({
+                                        ...editingPur,
+                                        items: [...editingPur.products, {productId: '', quantity: '', price: '' }]
+                                    })}
+                                >
+                                    Add Item
+                                </button>
+                                <br /><br />
+
+                                {/* Button để lưu chỉnh sửa */}
+                                <button onClick={handlePurEditSave}>Save Changes</button>
+
+                                {/* Button để hủy và đóng form */}
+                                <button onClick={() => {
+                                    setEditingPur(null);  // Đóng form "Edit Purchase Order"
+                                }} style={{ marginLeft: '10px' }}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                {showDeletePurConfirm && (
+                    <div className="popup-overlay">
+                        <div className="popup-content">
+                            <h3>Confirm Delete</h3>
+                            <p>Are you sure you want to delete PurchaseOrder <b>{deletePur.name}</b>?</p>
+                            <button onClick={handleDeletePurConfirm}>Yes, Delete</button>
+                            <button onClick={() => setShowDeletePurConfirm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
+                        </div>
+                    </div>
+                )}
+
+
+
+
+                {/* Suppliers Section  */}
                 <div className={ING.box}>
                     <h2 className={ING.sectionTitle}>SUPPLIER</h2>
                     <button onClick={() => setShowAddSupplierForm(true)}>Add Supplier</button>

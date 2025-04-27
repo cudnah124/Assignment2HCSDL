@@ -112,19 +112,7 @@ export const IngredientProvider = ({ children }) => {
         fetchPurchaseOrders();
     }, []);
 
-    const addPurchaseOrder = async (newOrder) => {
-        // Make API call or other logic to save the purchase order
-        const response = await fetch('/api/purchase-orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newOrder),
-        });
-        const data = await response.json();
-        if (data.success) {
-            setPurchaseOrder([...purchaseOrders, data.order]);
-        }
-        return data;
-    };
+    
 
     // Add supplier function
     const addSupplier = async (newSupplier) => {
@@ -179,6 +167,30 @@ export const IngredientProvider = ({ children }) => {
             return { success: false, error: error.message };
         }
     };
+
+    
+    const addPurchaseOrder = async (newOrder) => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/purchase_orders', newOrder);
+    
+            const { MaDon } = response.data;
+    
+            // Tạo bản ghi mới để thêm vào state
+            const newPurchaseOrder = {
+                ...newOrder,
+                MaDon: MaDon,
+                NgayNhap: new Date().toISOString().split('T')[0], // hoặc lấy từ server nếu server trả về
+            };
+    
+            setPurchaseOrder(prev => [...prev, newPurchaseOrder]);
+    
+            return response.data;
+        } catch (error) {
+            console.error('Error creating purchase order:', error.response?.data || error.message);
+            throw error; // Nếu muốn bắt lỗi ở nơi gọi hàm
+        }
+    };
+
     const deletePurchaseOrder = async (id) => {
         try {
 
@@ -202,14 +214,17 @@ export const IngredientProvider = ({ children }) => {
         try {
             const response = await axios.put(`http://localhost:5000/api/purchase_orders/${updatedOrder.id}`, updatedOrder);
             
+            // Check if the response contains a message
             if (response.data.message) {
+                // Successfully updated the order, so update the state
                 setPurchaseOrder(prev => prev.map(order => order.id === updatedOrder.id ? updatedOrder : order));
             }
 
-            return response.data;
+    
+            return response.data; // Ensure to return the response data to handle success or failure
         } catch (err) {
             console.error('Error updating purchase order:', err);
-            return { success: false, error: err.message };
+            return { success: false, error: err.message }; // Ensure this is returned if there’s an error
         }
     };
 
@@ -225,7 +240,6 @@ export const IngredientProvider = ({ children }) => {
             return { success: false, error: err.message };
         }
     };
-
     // Update ingredient info
     const updateIngredient = async (updateIngr) => {
         try {
@@ -237,7 +251,6 @@ export const IngredientProvider = ({ children }) => {
             return { success: false, error: err.message };
         }
     };
-
     // Delete ingredient
     const deleteIngredient = async (id) => {
         try {

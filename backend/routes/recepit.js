@@ -155,6 +155,45 @@ module.exports = (db) => {
             res.status(500).json({ error: 'Lỗi server khi cập nhật trạng thái' });
         }
     });
+    router.delete('/:id', async (req, res) => {
+        const orderId = req.params.id;  // Lấy ID từ URL
+    
+        // Kiểm tra đơn hàng có tồn tại trước khi xóa
+        const checkOrderSql = 'SELECT 1 FROM DonHang WHERE MaDonHang = ?';
+        const [orderCheck] = await db.query(checkOrderSql, [orderId]);
+    
+        if (orderCheck.length === 0) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+    
+        // Bắt đầu transaction để đảm bảo tính toàn vẹn của dữ liệu
+        const conn = await db.getConnection();
+        try {
+            await conn.beginTransaction();
+            
+            // Xóa chi tiết nguyên liệu của đơn hàng trước
+            await conn.query(`DELETE FROM GomDH_NuocUong WHERE MaDonHang = ?`, [orderId]);
+            await conn.query(`DELETE FROM GomDH_Topping WHERE MaDonHang = ?`, [orderId]);
+            
+            // Xóa đơn hàng chính
+            const [result] = await conn.query(`DELETE FROM DonHang WHERE MaDonHang = ?`, [orderId]);
+            
+            // Nếu không tìm thấy đơn hàng
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'Order not found' });
+            }
+            
+            // Commit transaction
+            await conn.commit();
+            res.status(200).json({ message: 'Order deleted successfully' });
+        } catch (err) {
+            await conn.rollback();  // Rollback nếu có lỗi
+            console.error('Error deleting order:', err);
+            res.status(500).json({ error: 'Server error when deleting order' });
+        } finally {
+            conn.release();
+        }
+    });
 
     return router;
 };

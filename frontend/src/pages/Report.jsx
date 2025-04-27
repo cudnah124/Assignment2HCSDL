@@ -11,38 +11,41 @@ function ReportByDate() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [searchDate, setSearchDate] = useState("");
   const [revenueData, setRevenueData] = useState([]); 
+  const [searchYear, setSearchYear] = useState("");
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
         const res = await fetch("http://localhost:5000/api/recepit");
         const data = await res.json();
-
+  
         const completed = data.filter((d) => d.TrangThai === "Completed");
+  
+        // Group orders by date
         const grouped = {}; 
-
         for (const order of completed) {
-          const date = order.NgayGioTao.slice(0, 10);
-          const month = new Date(order.NgayGioTao).getMonth(); // Extract month
+          const date = order.NgayGioTao.slice(0, 10); // lấy ngày
+          // const year = new Date(order.NgayGioTao).getFullYear(); // lấy năm
+          // const month = new Date(order.NgayGioTao).getMonth(); // lấy tháng
           const tongTien = parseFloat(order.TongTien || 0);
-
+  
           if (!grouped[date]) {
             grouped[date] = {
               date,
               orders: [],
             };
           }
-
-          // Tách tên + số lượng: "Trà Sữa x2" => "Trà Sữa (2)"
+  
+          // Grouping drinks and other order details
           const drinkNames = order.NuocUong?.split(", ").map((d) => {
             const match = d.match(/^(.*)\s+x(\d+)$/);
             if (match) {
-              const [, name, qty] = match; 
+              const [, name, qty] = match;
               return `${name} x ${qty}`;
             }
-            return d; // fallback if no match
+            return d;
           }) || [];
-
+  
           grouped[date].orders.push({
             id: order.MaDonHang,
             drinkNames,
@@ -51,31 +54,43 @@ function ReportByDate() {
             employee: order.MaNV,
           });
         }
-
-        // Prepare revenue data for the line chart (monthly total)
-        const monthlyRevenue = Array(12).fill(0);
+  
+        // Prepare revenue data for the line chart (monthly total for selected year)
+        const monthlyRevenue = Array(12).fill(0); // 12 tháng
         for (const order of completed) {
-          const month = new Date(order.NgayGioTao).getMonth();
+          const year = new Date(order.NgayGioTao).getFullYear(); // lấy năm
+          if (searchYear && year !== parseInt(searchYear)) continue; // chỉ lấy doanh thu cho năm chọn
+  
+          const month = new Date(order.NgayGioTao).getMonth(); // lấy tháng
           const tongTien = parseFloat(order.TongTien || 0);
-          monthlyRevenue[month] += tongTien;
+          monthlyRevenue[month] += tongTien; // cộng dồn theo tháng
         }
-
+  
         const finalReports = Object.values(grouped);
         setReports(finalReports);
-        setRevenueData(monthlyRevenue); 
-
+        setRevenueData(monthlyRevenue); // set dữ liệu doanh thu cho biểu đồ
+  
       } catch (err) {
         console.error("Lỗi lấy báo cáo:", err);
       }
     };
-
+  
     fetchReports();
-  }, []);
+  }, [searchYear]);
 
   const filteredReports = searchDate
     ? reports.filter((r) => r.date === searchDate)
     : reports;
 
+
+    const calculateTotalRevenue = () => {
+      const filteredData = searchDate
+        ? filteredReports.flatMap((report) => report.orders)
+        : reports.flatMap((report) => report.orders);
+      
+      return filteredData.reduce((total, order) => total + order.bill, 0);
+    };
+    const totalRevenue = calculateTotalRevenue();
   // Line chart data and options for revenue
   const revenueChartData = {
     labels: [
@@ -83,7 +98,7 @@ function ReportByDate() {
     ],
     datasets: [
       {
-        label: "Total Revenue ($)",
+        label: `Total Revenue for ${searchYear} ($)`,
         data: revenueData,
         fill: false,
         borderColor: "rgba(75, 192, 192, 1)",
@@ -91,11 +106,23 @@ function ReportByDate() {
       },
     ],
   };
+  
+  const revenueChartOptions = {
+    scales: {
+      y: {
+        min: 0,  // Đảm bảo trục y không bao giờ xuống dưới 0
+        beginAtZero: true,  // Cấu hình này cũng giúp trục y bắt đầu từ 0
+      },
+    },
+  };
 
   return (
     <div className="report-container">
       <div className="report-header">
         <h2>Report by Date</h2>
+        <span className="total-revenue">
+          Total Revenue: ${totalRevenue.toFixed(0)}
+        </span>
         <input
           type="date"
           value={searchDate}
@@ -132,7 +159,15 @@ function ReportByDate() {
 
         {/* Line chart for Total Revenue */}
         <div className="chart-container">
-          <Line data={revenueChartData} />
+        <input 
+          type="number"
+          placeholder="Select year"
+          value={searchYear}
+          onChange={(e) => setSearchYear(e.target.value)}
+          min="2000"
+          max="2100"
+        />
+          <Line data={revenueChartData} options={revenueChartOptions} />
         </div>
       </div> 
 
