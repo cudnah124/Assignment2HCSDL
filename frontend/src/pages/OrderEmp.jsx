@@ -36,7 +36,25 @@ function OrderStatus() {
     };
 
     /* Xu ly thay doi trang thai don hang */
-    const handleUpdateStatus = async () => { };
+    const handleUpdateStatus = async () => {
+        try {
+            const response = await axios.put(
+                `http://localhost:5000/api/recepit/${selectedOrder.id}`,  // Update with the correct URL and order ID
+                {
+                    status: selectedOrder.status,  // Send the updated status to the backend
+                }
+            );
+            // Assuming the backend returns the updated order, you can update the state with it
+            const updatedOrders = orders.map((order) =>
+                order.id === selectedOrder.id ? { ...order, status: selectedOrder.status } : order
+            );
+            setOrders(updatedOrders);  // Update the state with the new order data
+            setSelectedOrder(null);  // Close the popup after updating
+            console.log("Order status updated:", response.data);
+        } catch (error) {
+            console.error("Error updating order status:", error);
+        }
+    };
 
 // Sort orders by ID
 const handleSortById = () => {
@@ -116,6 +134,7 @@ const handleSortById = () => {
                         >
                             <option value="Pending">Pending</option>
                             <option value="Completed">Completed</option>
+                            <option value="Preparing">Preparing</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>
                         <p><strong>Voucher:</strong> {selectedOrder.voucher}</p>

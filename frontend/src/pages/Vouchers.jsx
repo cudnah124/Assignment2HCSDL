@@ -1,13 +1,15 @@
 import React from "react";
 import VC from '../styles/voucher.module.css';
 import OrderSidebar from "../component/OrderSideBar";
-import voucherData from "../data/voucher.json";
-import { useOrder } from "../context/OrderContext";
+// import voucherData from "../data/voucher.json";
+import { useOrder} from "../context/OrderContext";
 
 function Vouchers() {
 
-    const { appliedVoucher, applyVoucher } = useOrder();
 
+    const { appliedVoucher, applyVoucher, vouchers } = useOrder();
+
+    
     return (
         <div className={VC.voucherManageContainer}>
             <div className={VC.mainContent}>
@@ -16,7 +18,7 @@ function Vouchers() {
                 </div>
 
                 <div className={VC.voucherList}>
-                    {voucherData.map((voucher) => (
+                    {vouchers.map((voucher) => (
                         <div className={VC.voucherItem} key={voucher.code}>
                             <h3>{voucher.name}</h3>
                             <p>Code: <strong>{voucher.code}</strong></p>

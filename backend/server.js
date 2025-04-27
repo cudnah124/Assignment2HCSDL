@@ -12,6 +12,7 @@ const ingredientRoutes = require('./routes/ingredient')
 const supplierRoutes = require('./routes/suppliers')
 const purchaseRoutes = require('./routes/purchase_orders')
 const calendarRoutes = require('./routes/calendar')
+const voucherRoutes = require('./routes/voucher')
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -48,6 +49,7 @@ async function startServer() {
     app.use('/api/suppliers', supplierRoutes(db));
     app.use('/api/purchase_orders', purchaseRoutes(db));
     app.use('/api/calendar', calendarRoutes(db));
+    app.use('/api/voucher', voucherRoutes(db));
 
     app.get('/users', async (req, res) => {
       try {

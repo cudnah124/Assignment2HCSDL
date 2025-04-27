@@ -7,14 +7,20 @@ module.exports = (db) => {
         try {
             const sql = `
                 SELECT 
-                    MaNguyenLieu AS id,
-                    TenNguyenLieu AS name,
-                    MoTa AS description,
-                    DonGia AS price,
-                    TonKho AS quantity,
-                    DonViTinh AS unit
+                    NL.MaNguyenLieu AS id,
+                    NL.TenNguyenLieu AS name,
+                    NL.MoTa AS description,
+                    NL.DonGia AS price,
+                    NL.TonKho AS quantity,
+                    NL.DonViTinh AS unit,
+                    NCC.MaNCC AS supplier_id,
+                    NCC.TenNCC AS supplier_name
                 FROM 
-                    NguyenLieu;
+                    NguyenLieu NL
+                JOIN 
+                    Dung D ON NL.MaNguyenLieu = D.MaNguyenLieu
+                JOIN 
+                    NhaCungCap NCC ON D.MaNCC = NCC.MaNCC;
             `;
             
             const [results] = await db.query(sql);

@@ -17,7 +17,7 @@ export const IngredientProvider = ({ children }) => {
                 const res = await axios.get('http://localhost:5000/api/ingredient');
     
                 const groupIngredients = res.data.reduce((acc, item) => {
-                    const { id, name, description, price, quantity, unit } = item;
+                    const { id, name, description, price, quantity, unit ,supplier_id, supplier_name} = item;
     
                     acc.push({
                         id: id || "",
@@ -25,7 +25,9 @@ export const IngredientProvider = ({ children }) => {
                         description: description || "",
                         price: typeof price === 'string' ? parseFloat(price) : (price || 0),
                         quantity: typeof quantity === 'string' ? parseInt(quantity) : (quantity || 0),
-                        unit: unit || ""
+                        unit: unit || "",
+                        supplier_id: supplier_id || "", // Thêm thuộc tính nhà cung cấp
+                        supplier_name: supplier_name || ""
                     });
     
                     return acc;
@@ -110,6 +112,108 @@ export const IngredientProvider = ({ children }) => {
         fetchPurchaseOrders();
     }, []);
 
+    const addPurchaseOrder = async (newOrder) => {
+        // Make API call or other logic to save the purchase order
+        const response = await fetch('/api/purchase-orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newOrder),
+        });
+        const data = await response.json();
+        if (data.success) {
+            setPurchaseOrder([...purchaseOrders, data.order]);
+        }
+        return data;
+    };
+
+    // Add supplier function
+    const addSupplier = async (newSupplier) => {
+        try {
+            // Make API call using axios
+            const response = await axios.post('http://localhost:5000/api/suppliers', {
+                MaNCC: newSupplier.MaNCC,
+                TenNCC: newSupplier.TenNCC,
+                MaSoThue: newSupplier.MaSoThue,
+                addresses: newSupplier.addresses,
+                phones: newSupplier.phones,
+                emails: newSupplier.emails,
+            });
+            
+            console.log("Hehe")
+            if (response.data.message) {
+                // If supplier is created successfully, update the state
+                setSupplier([...suppliers, newSupplier]);
+            }
+    
+            return response.data;
+        } catch (error) {
+            console.error('Error adding supplier:', error);
+            return { success: false, error: error.message };
+        }
+    };
+    const deleteSupplier = async (id) => {
+        try {
+            // Make the API call to delete the supplier
+            const response = await axios.delete(`http://localhost:5000/api/suppliers/${id}`);
+            
+            // If the supplier was deleted successfully, update the state
+            if (response.data.message) {
+                setSupplier(prev => prev.filter(supplier => supplier.id !== id));
+            }
+    
+            return { success: true };
+        } catch (err) {
+            console.error('Error deleting supplier:', err);
+            return { success: false, error: err.message };
+        }
+    };
+    const updateSupplier = async (updatedSupplier) => {
+        try {
+            const response = await axios.put(`http://localhost:5000/api/suppliers/${updatedSupplier.id}`, updatedSupplier);
+            if (response.data.message) {
+                setSupplier(prev => prev.map(sup => sup.id === updatedSupplier.id ? updatedSupplier : sup));
+            }
+            return response.data;
+        } catch (error) {
+            console.error('Error updating supplier:', error);
+            return { success: false, error: error.message };
+        }
+    };
+    const deletePurchaseOrder = async (id) => {
+        try {
+
+            console.log(id);
+            // Make the API call to delete the purchase order
+            const response = await axios.delete(`http://localhost:5000/api/purchase_orders/${id}`);
+            
+            // If the purchase order was deleted successfully, update the state
+            if (response.data.message) {
+                setPurchaseOrder(prev => prev.filter(order => order.id !== id));
+            }
+    
+            return { success: true };
+        } catch (err) {
+            console.error('Error deleting purchase order:', err);
+            return { success: false, error: err.message };
+        }
+    };
+    // Update purchase order
+    const updatePurchaseOrder = async (updatedOrder) => {
+        try {
+            const response = await axios.put(`http://localhost:5000/api/purchase_orders/${updatedOrder.id}`, updatedOrder);
+            
+            if (response.data.message) {
+                setPurchaseOrder(prev => prev.map(order => order.id === updatedOrder.id ? updatedOrder : order));
+            }
+
+            return response.data;
+        } catch (err) {
+            console.error('Error updating purchase order:', err);
+            return { success: false, error: err.message };
+        }
+    };
+
+
     // Add ingredient 
     const addIngredient = async (newIngredient) => {
         try {
@@ -169,7 +273,13 @@ export const IngredientProvider = ({ children }) => {
             loading,
             error,
             addIngredient,
+            addPurchaseOrder,
+            addSupplier,
+            updateSupplier,
             updateIngredient,
+            updatePurchaseOrder,
+            deleteSupplier,
+            deletePurchaseOrder,
             deleteIngredient,
             sortPurchaseOrdersByDate
         }}>

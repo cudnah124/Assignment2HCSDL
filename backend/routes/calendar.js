@@ -11,13 +11,14 @@ module.exports = (db) => {
         DATE_FORMAT(CL.NgayLam, '%Y-%m-%d') AS NgayLam,
         CL.GioLam,
         CL.GioTan,
-        GROUP_CONCAT(CONCAT(NV.Ho, ' ', NV.Ten) SEPARATOR ', ') AS NhanVienLam
-      FROM 
+        GROUP_CONCAT(CONCAT(NV.Ho, ' ', NV.Ten) SEPARATOR ', ') AS NhanVienLam,
+        NV.MaNV AS MaNV
+    FROM 
         CaLam CL
-      LEFT JOIN NV_Lam NVL ON CL.MaCa = NVL.MaCa
-      LEFT JOIN NhanVien NV ON NVL.MaNV = NV.MaNV
-      GROUP BY CL.MaCa, CL.NgayLam, CL.GioLam, CL.GioTan
-      ORDER BY CL.NgayLam ASC, CL.GioLam ASC;
+    LEFT JOIN NV_Lam NVL ON CL.MaCa = NVL.MaCa
+    LEFT JOIN NhanVien NV ON NVL.MaNV = NV.MaNV
+    GROUP BY CL.MaCa, CL.NgayLam, CL.GioLam, CL.GioTan, NV.MaNV
+    ORDER BY CL.NgayLam ASC, CL.GioLam ASC;
     `;
     try {
       const [results] = await db.query(sql);

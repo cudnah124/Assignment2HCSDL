@@ -70,6 +70,29 @@ module.exports = (db) => {
             res.status(500).json({ error: 'Error fetching purchase order items.' });
         }
     });
+    router.delete('/:MaDon', async (req, res) => {
+        const { MaDon } = req.params;
+        const conn = await db.getConnection();
+        try {
+            await conn.beginTransaction();
+    
+            // Xóa chi tiết nguyên liệu của đơn trước (GomDNH_NL)
+            await conn.query(`DELETE FROM GomDNH_NL WHERE MaDon = ?`, [MaDon]);
+    
+            // Sau đó xóa đơn nhập chính (DonNhapHang)
+            await conn.query(`DELETE FROM DonNhapHang WHERE MaDon = ?`, [MaDon]);
+    
+            await conn.commit();
+            res.json({ message: 'Purchase order deleted successfully.' });
+        } catch (error) {
+            await conn.rollback();
+            console.error('Error deleting purchase order:', error);
+            res.status(500).json({ error: 'Error deleting purchase order.' });
+        } finally {
+            conn.release();
+        }
+        
+    });
 
     return router;
 };

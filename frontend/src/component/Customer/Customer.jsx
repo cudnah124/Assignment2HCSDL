@@ -16,37 +16,50 @@ function Customer({ onClose, onSubmit, total, orderItems }) {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const now = new Date().toISOString();
+    const now = new Date(); // Get the current date and time
     const status = "Pending";
   
     try {
-      // B1: Nếu có khách hàng, thêm vào DB
+      // Step 1: Fetch all shifts and their employee assignments
+      const response = await axios.get('http://localhost:5000/api/calendar');
+      
+      // Step 2: Find the correct shift based on the current date and time
+      const shift = response.data.find(item => {
+        const shiftDate = new Date(item.NgayLam + 'T' + item.GioLam);  // Combine date and start time
+        const shiftEndTime = new Date(item.NgayLam + 'T' + item.GioTan); // Combine date and end time
+        return now >= shiftDate && now <= shiftEndTime;
+      });
+  
+      // If a valid shift is found, get the MaNV (employee ID), otherwise default to 'AAAA'
+      const MaNV = shift ? shift.MaNV : 'NV0001';  // Default to 'AAAA' if no shift is found
+  
+      // Step 3: If there's customer info to input, save it to the DB
       if (wantToInputCustomer) {
         const customerData = { firstname, lastname, phone };
         await axios.post('http://localhost:5000/api/customer', customerData);
       }
   
-      // B2: Chuẩn bị dữ liệu đơn hàng
+      // Step 4: Prepare the order payload
       const orderPayload = {
-        MaNV: "NV0002",                      // mã nhân viên (string)
-        TrangThai: status,           // trạng thái đơn hàng (string)
-        NgayGioTao: now, // ISO datetime
+        MaNV: MaNV,  // Use the employee ID (MaNV) from the shift (or 'AAAA' if no shift)
+        TrangThai: status,  // Order status
+        NgayGioTao: now.toISOString(),  // Current timestamp
         NuocUong: orderItems
           .filter(item => item.category === "Drink")
           .map(item => ({
-            MaMon: item.id,                // mã món nước
-            KichThuoc: item.size,          // size: "S", "M", "L"
-            SoLuong: item.quantity         // số lượng
+            MaMon: item.id,  // Drink code
+            KichThuoc: item.size,  // Size: "S", "M", "L"
+            SoLuong: item.quantity  // Quantity
           })),
         Topping: orderItems
           .filter(item => item.category === "Topping")
           .map(item => ({
-            MaMon: item.id,                // mã topping
-            SoLuong: item.quantity         // số lượng
+            MaMon: item.id,  // Topping code
+            SoLuong: item.quantity  // Quantity
           }))
       };
-
   
+      // Step 5: Submit the order to the API
       await axios.post('http://localhost:5000/api/recepit', orderPayload);
       alert("✅ Đơn hàng đã được thêm!");
       resetOrder();

@@ -128,5 +128,33 @@ module.exports = (db) => {
         }
     });
 
+    router.put('/:id', async (req, res) => {
+        const orderId = req.params.id;  // Get the order ID from the URL
+        const { status } = req.body;    // Get the new status from the request body
+    
+        // Kiểm tra xem trạng thái có hợp lệ không
+        const validStatuses = ['Pending', 'Completed', 'Preparing', 'Cancelled'];  // List of valid statuses
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ error: 'Trạng thái không hợp lệ' });
+        }
+    
+        // Cập nhật trạng thái đơn hàng trong bảng DonHang
+        const sql = `UPDATE DonHang SET TrangThai = ? WHERE MaDonHang = ?`;
+    
+        try {
+            const [result] = await db.query(sql, [status, orderId]);
+            
+            // Nếu không tìm thấy đơn hàng với ID này
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'Đơn hàng không tồn tại' });
+            }
+    
+            res.json({ message: 'Cập nhật trạng thái đơn hàng thành công' });
+        } catch (err) {
+            console.error('Lỗi cập nhật trạng thái đơn hàng:', err);
+            res.status(500).json({ error: 'Lỗi server khi cập nhật trạng thái' });
+        }
+    });
+
     return router;
 };

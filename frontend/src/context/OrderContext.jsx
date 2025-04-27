@@ -1,33 +1,43 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 // Context to manage order data
 const OrderContext = createContext();
 
 export const useOrder = () => useContext(OrderContext);
 
-
-
 export const OrderProvider = ({ children }) => {
   // State to store list of item & applied voucher
   const [orderItems, setOrderItems] = useState([]);
   const [appliedVoucher, setAppliedVoucher] = useState(null);
+  const [vouchers, setVouchers] = useState([]);  // Corrected line
 
-  // Them item vao gio hang
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/voucher'); // Adjust the URL as needed
+        setVouchers(response.data); // Store the vouchers in state
+      } catch (error) {
+        console.error('Error fetching vouchers:', error);
+      }
+    };
+
+    fetchVouchers();
+  }, []);
+
+  // Add item to the cart
   const addItem = (item) => {
     setOrderItems((orderItems) => {
-      // Kiểm tra xem món đã có trong giỏ hàng chưa
       const existingItem = orderItems.find(
         (orderItem) => orderItem.name === item.name && orderItem.size === item.size
       );
       if (existingItem) {
-        // Nếu đã có, tăng số lượng
         return orderItems.map((orderItem) =>
           orderItem.name === item.name && orderItem.size === item.size
             ? { ...orderItem, quantity: orderItem.quantity + 1 }
             : orderItem
         );
       } else {
-        // Nếu chưa có, thêm mới với số lượng = 1
         return [...orderItems, { ...item, quantity: 1 }];
       }
     });
@@ -59,13 +69,11 @@ export const OrderProvider = ({ children }) => {
     );
   };
 
-  // Tam tinh 
   const subtotal = orderItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  // Gia tri chiet khau
   const getDiscount = () => {
     if (!appliedVoucher || subtotal < appliedVoucher.minOrder) return 0;
     return Math.min(
@@ -77,28 +85,52 @@ export const OrderProvider = ({ children }) => {
   const discount = getDiscount();
   const total = subtotal - discount;
 
-  // Ap dung voucher
-  const applyVoucher = (voucher) => {
-    // Kiem tra neu don hang da duoc ap dung voucher
-    if (appliedVoucher) return false;
+  const applyVoucher = async (voucher) => {
+    if (appliedVoucher) return false;  // Prevent applying multiple vouchers
 
-    // Kiem tra dieu kien ap dung
     if (subtotal >= voucher.minOrder) {
-      setAppliedVoucher(voucher);
-      return true;
+      // Update the voucher usage count (decrement by 1)
+      const updatedVoucher = { ...voucher, Times: voucher.Times - 1 };
+      // Update the voucher in the state
+      setAppliedVoucher(updatedVoucher);
+
+      try {
+        // Send PUT request to backend to update the voucher usage count
+        await axios.put(`http://localhost:5000/api/voucher/${voucher.code}`, {
+          times: updatedVoucher.Times,
+        });
+        return true;  // Successfully applied voucher
+      } catch (error) {
+        console.error('Error updating voucher usage:', error);
+        return false;
+      }
     }
-    return false; 
+
+    return false;
   };
 
-  // Reset order 
+
   const resetOrder = () => {
     setOrderItems([]);
     setAppliedVoucher(null);
   };
 
   return (
-    <OrderContext.Provider value={{ orderItems, appliedVoucher, total, discount, subtotal, addItem, applyVoucher, removeItem, increaseQuantity, decreaseQuantity, resetOrder }}>
+    <OrderContext.Provider value={{
+      orderItems,
+      vouchers,
+      appliedVoucher,
+      total,
+      discount,
+      subtotal,
+      addItem,
+      applyVoucher,
+      removeItem,
+      increaseQuantity,
+      decreaseQuantity,
+      resetOrder
+    }}>
       {children}
     </OrderContext.Provider>
   );
-}; 
+};
