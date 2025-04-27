@@ -169,9 +169,9 @@ export const IngredientProvider = ({ children }) => {
     };
     const updateSupplier = async (updatedSupplier) => {
         try {
-            const response = await axios.put(`http://localhost:5000/api/suppliers/${updatedSupplier.id}`, updatedSupplier);
+            const response = await axios.put(`http://localhost:5000/api/suppliers/${updatedSupplier.MaNCC}`, updatedSupplier);
             if (response.data.message) {
-                setSupplier(prev => prev.map(sup => sup.id === updatedSupplier.id ? updatedSupplier : sup));
+                setSupplier(prev => prev.map(sup => sup.id === updatedSupplier.MaNCC ? updatedSupplier : sup));
             }
             return response.data;
         } catch (error) {

@@ -81,8 +81,7 @@ function Ingredient() {
     
 
     const handleEditClick = (ingr) => setEditingIngr(ingr);
-    // const handleSupEditClick = (supp) => setEditingSup(supp);
-    // const handlePurEditClick = (pur) => setEditingPur(pur);
+
 
     const handleDeleteClick = (ingr) => {
         setDeleteIngr(ingr);
@@ -398,6 +397,7 @@ function Ingredient() {
                 </div>
             )}
 
+
             {/* Delete Confirmation */}
             {showDeleteConfirm && (
                 <div className="popup-overlay">
@@ -490,11 +490,6 @@ function Ingredient() {
                             <span>{supp.phone}</span>
                             <span>{supp.taxCode}</span>
                             <span className="action-icons">
-                                {/* <img
-                                src="/images/icon/edit.png"
-                                alt="Edit"
-                                onClick={() => handleEditClick(ingr)}
-                                /> */}
                                 <img
                                 src="/images/icon/delete.png"
                                 alt="Delete"
