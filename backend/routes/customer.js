@@ -44,59 +44,72 @@ router.get('/all', async (req, res) => {
 
 // Route POST để thêm khách hàng mới
 router.post('/', async (req, res) => {
-  const { firstname, lastname, phone } = req.body;
+    const { firstname, lastname, phone } = req.body;
 
-  // Kiểm tra dữ liệu đầu vào
-  if (!firstname || !lastname || !phone) {
-    return res.status(400).json({ message: 'Thiếu thông tin khách hàng.' });
-  }
+    if (!firstname || !lastname || !phone) {
+      return res.status(400).json({ message: 'Thiếu thông tin khách hàng.' });
+    }
 
-  // Ép kiểu dữ liệu
-  const cleanedFirstname = String(firstname).trim();
-  const cleanedLastname = String(lastname).trim();
-  const cleanedPhone = String(phone).trim();
+    const cleanedFirstname = String(firstname).trim();
+    const cleanedLastname = String(lastname).trim();
+    const cleanedPhone = String(phone).trim();
 
-  // Kiểm tra định dạng số điện thoại (10-15 chữ số)
-  const phoneRegex = /^[0-9]{10,15}$/;
-  if (!phoneRegex.test(cleanedPhone)) {
-    return res.status(400).json({ message: 'Số điện thoại không hợp lệ.' });
-  }
+    const phoneRegex = /^[0-9]{10,15}$/;
+    if (!phoneRegex.test(cleanedPhone)) {
+      return res.status(400).json({ message: 'Số điện thoại không hợp lệ.' });
+    }
 
-  let connection;
+    let connection;
 
-  try {
-    connection = await db.getConnection();
-    await connection.beginTransaction();
+    try {
+      connection = await db.getConnection();
+      await connection.beginTransaction();
 
-    console.log("Bắt đầu thêm khách hàng...");
+      console.log("Bắt đầu kiểm tra số điện thoại...");
 
-    // Thêm khách hàng vào bảng KhachHang
-    const [result] = await connection.query(
-      `INSERT INTO KhachHang (Ho, Ten) VALUES (?, ?)`,
-      [cleanedFirstname, cleanedLastname]
-    );
+      // 🔥 Kiểm tra nếu số điện thoại đã tồn tại
+      const [existingPhoneRows] = await connection.query(
+        `SELECT MaKH FROM SDT_KhachHang WHERE SDT = ?`,
+        [cleanedPhone]
+      );
 
-    const newMaKH = result.insertId;
+      if (existingPhoneRows.length > 0) {
+        const existingMaKH = existingPhoneRows[0].MaKH;
 
-    // Thêm số điện thoại vào bảng SDT_KhachHang
-    await connection.query(
-      `INSERT INTO SDT_KhachHang (MaKH, SDT) VALUES (?, ?)`,
-      [newMaKH, cleanedPhone]
-    );
+        await connection.rollback();  // Không thêm khách mới, rollback luôn
+        return res.status(200).json({
+          message: 'Số điện thoại đã tồn tại.',
+          MaKH: existingMaKH
+        });
+      }
+      // Thêm khách hàng vào bảng KhachHang
+      const [result] = await connection.query(
+        `INSERT INTO KhachHang (Ho, Ten) VALUES (?, ?)`,
+        [cleanedFirstname, cleanedLastname]
+      );
 
-    await connection.commit();
+      const newMaKH = result.insertId;
 
-    // Lấy lại danh sách tất cả khách hàng
-    const allCustomers = await fetchAllCustomers();
+      // Thêm số điện thoại vào bảng SDT_KhachHang
+      await connection.query(
+        `INSERT INTO SDT_KhachHang (MaKH, SDT) VALUES (?, ?)`,
+        [newMaKH, cleanedPhone]
+      );
 
-    res.status(200).json({
-      message: 'Thêm khách hàng thành công.',
-      MaKH: newMaKH,
-      firstname: cleanedFirstname,
-      lastname: cleanedLastname,
-      phone: cleanedPhone,
-      allCustomers
-    });
+      await connection.commit();
+
+      // Lấy lại danh sách tất cả khách hàng
+      const allCustomers = await fetchAllCustomers();
+
+      res.status(200).json({
+        message: 'Thêm khách hàng thành công.',
+        MaKH: newMaKH,
+        firstname: cleanedFirstname,
+        lastname: cleanedLastname,
+        phone: cleanedPhone,
+        allCustomers
+      });
+      
     } catch (err) {
       console.error("Lỗi trong quá trình xử lý:", err);
       if (connection) await connection.rollback();

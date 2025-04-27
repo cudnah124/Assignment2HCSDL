@@ -45,7 +45,7 @@ module.exports = (db) => {
 
     // API POST thêm đơn hàng mới
     router.post('/', async (req, res) => {
-        const { MaNV, TrangThai, NuocUong, Topping, NgayGioTao } = req.body;
+        const { MaKH, MaNV, TrangThai, NuocUong, Topping, NgayGioTao } = req.body;
 
         // Kiểm tra và ép kiểu các trường dữ liệu
         const employeeId = String(MaNV).trim();  // Mã nhân viên cần là string
@@ -83,8 +83,8 @@ module.exports = (db) => {
 
             // Bước 2: Thêm đơn hàng vào bảng DonHang
             const [insertOrderResult] = await connection.query(
-                `INSERT INTO DonHang (MaDonHang, MaNV, TrangThai, NgayGioTao) VALUES (?, ?, ?, ?)`,
-                [newOrderId, employeeId, status, orderDate]
+                `INSERT INTO DonHang (MaDonHang, MaNV, TrangThai, MaKH, NgayGioTao) VALUES (?, ?, ?, ?, ?)`,
+                [newOrderId, employeeId, status, MaKH, orderDate]
             );
 
             // Bước 3: Thêm nước uống vào bảng GomDH_NuocUong

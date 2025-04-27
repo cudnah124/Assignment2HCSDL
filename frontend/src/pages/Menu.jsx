@@ -1,8 +1,7 @@
 import React, { useState, useContext } from "react";
 import MN from '../styles/menu.module.css';
-import images from '../data/drink.json';
 import OrderSidebar from "../component/OrderSideBar";
-import { useOrder } from "../context/OrderContext"; /*use shared data*/
+import { useOrder } from "../context/OrderContext"; 
 import { DrinkContext } from "../context/DrinkContext";
 
 function Menu() {
@@ -112,7 +111,7 @@ function Menu() {
           <div className={MN.popupOverlay} onClick={() => setPopupDrink(null)}>
             <div className={MN.popupContent} onClick={(e) => e.stopPropagation()}>
               <img
-                src={images.find((image) => image.name === popupDrink.name)?.image}
+                src={`/images/drinks/${popupDrink.id}.jpg`}
                 alt={popupDrink.name}
                 className={MN.popupImg}
               />
