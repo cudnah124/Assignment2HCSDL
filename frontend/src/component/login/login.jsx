@@ -19,7 +19,7 @@ function Login() {
     });
     if (response.data.success) {
         alert(response.data.message);
-        navigate(role === 'manager' ? '/admin' : '/employee/menu');
+        navigate(role === 'manager' ? '/admin/employeemanagement' : '/employee/menu');
       }
     } catch (err) {
         console.error('Error details:', err.response);

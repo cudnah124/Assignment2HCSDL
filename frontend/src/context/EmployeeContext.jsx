@@ -93,7 +93,9 @@ export const EmployeeProvider = ({ children }) => {
 
     const deleteShift = async (id) => {
         try {
+            
             await axios.delete(`http://localhost:5000/api/calendar/${id}`);
+            
             setShifts(prev => prev.filter(shift => shift.id !== id));
         } catch (err) {
             console.error('Lỗi xóa ca làm:', err);

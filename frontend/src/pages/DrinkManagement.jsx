@@ -68,9 +68,14 @@ function DrinkManage() {
       alert("Please provide both ID and Name for the drink.");
       return;
     }
-
-    console.log("Adding new drink:", newDrk);
-
+  
+    if (!newDrk.image) {
+      alert("Please upload an image for the drink.");
+      return;
+    }
+    
+    // Đính kèm ảnh
+  
     try {
       await addDrinks(newDrk);
       setNewDrk({
@@ -80,7 +85,7 @@ function DrinkManage() {
         image: "",
         price: { S: 0, M: 0, L: 0 }
       });
-      setShowAddForm(false); // Hide form after saving
+      setShowAddForm(false); // Ẩn form sau khi lưu
     } catch (error) {
       console.error("Failed to add drink:", error);
       alert("There was an error adding the drink.");
@@ -111,12 +116,13 @@ function DrinkManage() {
 
         <div className="drink-list">
           {filteredDrinks
+            .filter(item => item?.id)
             .sort((a, b) => a.id.localeCompare(b.id))
             .map((drink) => (
               <div className="drink-item" key={drink.id}>
-                <img src={images.find((image) => image.name === drink.name)?.image} alt={drink.name} className="drink-img" />
+                <img src={`/images/drinks/${drink.id}.jpg`} alt={drink.name} className="drink-img" />
                 <span className="drink-name">{drink.name}</span>
-
+                <span className="drink-name">{drink.id}</span>
                 <div className="drink-action-icons">
                   <img src="/images/icon/edit.png" alt="Edit" onClick={() => handleEditClick(drink)} />
                   <img src="/images/icon/delete.png" alt="Delete" onClick={() => handleDeleteClick(drink)} />
@@ -161,11 +167,17 @@ function DrinkManage() {
               <option value="Topping">Topping</option>
             </select>
 
-            <label>Image: </label>
-            <input
-              value={newDrk.image}
-              onChange={(e) => setNewDrk({ ...newDrk, image: e.target.value })}
-            />
+            <div>
+              <label>Ảnh món:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => setNewDrk({
+                  ...newDrk, image: e.target.files[0] || "" 
+                })
+              }
+              />
+            </div>
 
             {newDrk.category === 'Drink' ? (
               <>

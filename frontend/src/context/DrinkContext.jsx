@@ -51,34 +51,49 @@ export const DrinkProvider = ({ children }) => {
 
     // Thêm đồ uống
     const addDrinks = async (newDrk) => {
-        try {
-          const { id, name, category, price } = newDrk;
-      
-          // Tạo dữ liệu phù hợp để gửi tới backend
-          let newDrkForDB = { id, name, category };
-      
-          if (category === 'Drink') {
-            newDrkForDB = {
-              ...newDrkForDB,
-              priceS: price.S,
-              priceM: price.M,
-              priceL: price.L,
-            };
-          } else if (category === 'Topping') {
-            newDrkForDB = {
-              ...newDrkForDB,
-              price,
-            };
-          }
-      
-          const res = await axios.post('http://localhost:5000/api/menu', newDrkForDB);
-          if (res.status === 201) {
-            setDrinks((prev) => [...prev, newDrk]);
-          }
-        } catch (err) {
-          console.error('Lỗi thêm đồ uống:', err);
+      try {
+        const { id, name, category, price, image } = newDrk;
+        
+        // Tạo dữ liệu cơ bản để gửi tới backend
+        let newDrkForDB = { id, name, category };
+    
+        // Nếu món là Drink, thêm giá cho từng size
+        if (category === 'Drink') {
+          newDrkForDB = {
+            ...newDrkForDB,
+            priceS: price.S,
+            priceM: price.M,
+            priceL: price.L,
+          };
+        } else if (category === 'Topping') {
+          // Nếu là Topping, chỉ cần gửi giá
+          newDrkForDB = {
+            ...newDrkForDB,
+            price,
+          };
         }
-      };
+    
+        // Nếu có ảnh, thêm vào FormData
+        const formData = new FormData();
+        formData.append('image', image); // Đảm bảo rằng 'image' là tệp ảnh
+        formData.append('data', JSON.stringify(newDrkForDB)); // Gửi dữ liệu khác cùng với ảnh
+        
+        console.log(newDrk)
+
+        // Gửi yêu cầu POST với FormData
+        const res = await axios.post('http://localhost:5000/api/menu', newDrk, {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Quan trọng khi gửi FormData
+          },
+        });
+    
+        if (res.status === 201) {
+          setDrinks((prev) => [...prev, newDrk]); // Cập nhật danh sách đồ uống sau khi thêm thành công
+        }
+      } catch (err) {
+        console.error('Lỗi thêm đồ uống:', err);
+      }
+    };
       
 
     // Cập nhật đồ uống

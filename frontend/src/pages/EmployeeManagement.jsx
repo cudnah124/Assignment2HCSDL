@@ -76,8 +76,8 @@ function EmployeeManage() {
   };
   
   const handleShiftDeleteConfirm = () => {
-    if (ShiftToDelete && ShiftToDelete.MaNV) {
-      deleteShift(ShiftToDelete.MaNV);
+    if (ShiftToDelete && ShiftToDelete.id) {
+      deleteShift(ShiftToDelete.id);
     }
     setShowShiftDeleteConfirm(false);
     setShiftToDelete(null);
@@ -421,7 +421,7 @@ function EmployeeManage() {
         <div className="popup-overlay">
           <div className="popup-content">
           <h3>Confirm Delete</h3>
-          <p>Are you sure you want to delete shift <b>{ShiftToDelete.name}</b>?</p>
+          <p>Are you sure you want to delete shift <b>{ShiftToDelete.NhanVienLam}</b>?</p>
           <button onClick={handleShiftDeleteConfirm}>Yes, Delete</button>
           <button onClick={() => setShowShiftDeleteConfirm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
           </div>

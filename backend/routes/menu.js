@@ -1,5 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
+const uploadPath = path.join(__dirname, '..','..', 'frontend', 'public', 'images', 'drinks');
+
+// Đảm bảo thư mục uploads tồn tại
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
 
 module.exports = (db) => {
 
@@ -46,13 +57,11 @@ module.exports = (db) => {
   });
 
 
-  router.post('/', async (req, res) => {
-    // Ép kiểu dữ liệu đầu vào
+  router.post('/', upload.single('image'), async (req, res) => {
     const id = String(req.body.id);
     const name = String(req.body.name);
     const category = String(req.body.category);
   
-    // Các giá trị giá khác nhau tùy theo loại
     const priceS = req.body.priceS != null ? Number(req.body.priceS) : null;
     const priceM = req.body.priceM != null ? Number(req.body.priceM) : null;
     const priceL = req.body.priceL != null ? Number(req.body.priceL) : null;
@@ -68,12 +77,10 @@ module.exports = (db) => {
       );
   
       if (category === 'Drink') {
-        // Thêm vào bảng NuocUong
         await connection.query(
           'INSERT INTO NuocUong (MaMon) VALUES (?)', [id]
         );
   
-        // Thêm vào bảng KichThuocDoUong với 3 kích thước
         await connection.query(
           'INSERT INTO KichThuocDoUong (MaMon, KichThuoc, Gia) VALUES (?, ?, ?)',
           [id, 'S', priceS]
@@ -87,11 +94,23 @@ module.exports = (db) => {
           [id, 'L', priceL]
         );
       } else if (category === 'Topping') {
-        // Thêm topping với 1 giá duy nhất
         await connection.query(
           'INSERT INTO Topping (MaMon, Gia) VALUES (?, ?)',
           [id, price]
         );
+      }
+  
+      // Nếu có file ảnh được upload
+      if (req.file) {
+        const imageFile = req.file;
+        const ext = path.extname(imageFile.originalname); // Lấy đuôi file, ví dụ '.jpg'
+        const filename = `${id}${ext}`;
+        const filepath = path.join(uploadPath, filename);
+  
+        await fs.promises.writeFile(filepath, imageFile.buffer);
+  
+        // Nếu muốn lưu đường dẫn ảnh vào DB, thêm cột ImagePath trong bảng Menu rồi update:
+        // await connection.query('UPDATE Menu SET ImagePath = ? WHERE MaMon = ?', [`/uploads/${filename}`, id]);
       }
   
       await connection.commit();
