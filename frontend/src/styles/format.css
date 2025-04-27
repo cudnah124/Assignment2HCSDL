@@ -328,11 +328,16 @@
     margin-top: 20px;
   }
   
+  .addshift {
+    margin-left: 10px; 
+    margin-bottom: 5px; 
+  }
   .addshift-btn-save {
-    background-color: #4CAF50;  /* Green */
+    background-color: #3b1b01;  /* Green */
     color: white;
-    padding: 10px 15px;
+    padding: 5px  ;
     border: none;
+    margin-top: 5px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
@@ -340,13 +345,13 @@
   }
   
   .addshift-btn-save:hover {
-    background-color: #45a049;
+    background-color: #0dae2b;
   }
   
   .addshift-btn-cancel {
-    background-color: #f44336;  /* Red */
+    background-color: #a2a2a2;  /* Red */
     color: white;
-    padding: 10px 15px;
+    padding: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -355,6 +360,6 @@
   }
   
   .addshift-btn-cancel:hover {
-    background-color: #d32f2f;
+    background-color: #3f3c3c;
   }
   

@@ -9,7 +9,7 @@
     padding: 20px;  
     color: #693f21 ; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-right: 380px;
+    margin-right: 380px; 
 } 
 
 .topBar {
@@ -50,7 +50,7 @@
 } 
 
 .option {
-    padding: 10px; 
+    padding: 11px; 
 }
 
 .option nav ul {
