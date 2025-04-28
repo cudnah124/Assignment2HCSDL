@@ -19,7 +19,7 @@ async function createDBPool() {
     console.log('✅ Kết nối pool DB thành công!');
   } catch (err) {
     console.error("❌ Không thể kết nối tới database:", err);
-    process.exit(1);  // Dừng server nếu không thể kết nối DB
+    process.exit(1); 
   }
 }
 createDBPool();

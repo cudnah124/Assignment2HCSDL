@@ -12,19 +12,23 @@ module.exports = (db) => {
   // Đăng nhập
   router.post('/login', async (req, res) => {
     const { username, password, role } = req.body;
-    const table = role === 'Manager' ? 'UserAccount' : 'UserAccount'; // Có thể mở rộng role về sau
+    const table = role === 'sManager' ? 'ManagerAccount' : 'EmployeeAccount'; // Có thể mở rộng role về sau
 
     let connection;
 
     try {
       connection = await db.getConnection(); 
+      const [rowsCheck] = await connection.query(
+        `SELECT * FROM ManagerAccount WHERE Username = ? AND Password = ?`,
+        [username, password]
+      );
 
       const [rows] = await connection.query(
         `SELECT * FROM ${table} WHERE Username = ? AND Password = ?`,
         [username, password]
       );
 
-      if (rows.length > 0) {
+      if (rows.length > 0 || rowsCheck.length > 0) {
         res.json({ success: true, message: 'Đăng nhập thành công!' });
       } else {
         res.status(401).json({ success: false, message: 'Sai tài khoản hoặc mật khẩu.' });

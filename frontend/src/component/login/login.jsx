@@ -19,7 +19,7 @@ function Login() {
     });
     if (response.data.success) {
         alert(response.data.message);
-        navigate(role === 'manager' ? '/admin/employeemanagement' : '/employee/menu');
+        navigate(role === 'sManager' ? '/admin/employeemanagement' : '/employee/menu');
       }
     } catch (err) {
         console.error('Error details:', err.response);
@@ -66,8 +66,8 @@ function Login() {
           </div>
 
           <div className={LP.optionBoxes}>
-            <button type="button" className={LP.optionBox} onClick={handleLogin('manager')}>Login as Admin</button>
-            <button type="button" className={LP.optionBox} onClick={handleLogin('staff')}>Login as Employee</button>
+            <button type="button" className={LP.optionBox} onClick={handleLogin('sManager')}>Login as Admin</button>
+            <button type="button" className={LP.optionBox} onClick={handleLogin('Employee')}>Login as Employee</button>
           </div>
         </form>
       </div >
