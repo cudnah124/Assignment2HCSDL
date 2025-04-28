@@ -11,9 +11,7 @@ module.exports = (db) => {
         try {
             await conn.beginTransaction();
     
-            
-    
-            // Step 2: Insert the supplier with the new MaNCC
+            // Insert the supplier with the new MaNCC
             await conn.query(
                 `INSERT INTO NhaCungCap (TenNCC, MaSoThue) VALUES (?, ?)`,
                 [TenNCC, MaSoThue]
@@ -28,7 +26,7 @@ module.exports = (db) => {
                 newMaNCC = `NC${(numericPart).toString().padStart(4, '0')}`;
             }
     
-            // Step 3: Insert addresses, phones, and emails
+            //Insert addresses, phones, and emails
             if (addresses?.length) {
                 for (const addr of addresses) {
                     await conn.query(
@@ -56,7 +54,6 @@ module.exports = (db) => {
                 }
             }
     
-            // Commit the transaction
             await conn.commit();
             res.status(201).json({ message: 'Supplier created successfully.', MaNCC: newMaNCC });
         } catch (error) {
@@ -103,15 +100,12 @@ module.exports = (db) => {
         try {
             await conn.beginTransaction();
 
-            // Step 1: Delete related data (addresses, phones, emails)
             await conn.query(`DELETE FROM DiaChiNCC WHERE MaNCC = ?`, [MaNCC]);
             await conn.query(`DELETE FROM SDT_NCC WHERE MaNCC = ?`, [MaNCC]);
             await conn.query(`DELETE FROM Email_NCC WHERE MaNCC = ?`, [MaNCC]);
 
-            // Step 2: Delete the supplier
             await conn.query(`DELETE FROM NhaCungCap WHERE MaNCC = ?`, [MaNCC]);
 
-            // Commit the transaction
             await conn.commit();
             res.json({ message: 'Supplier deleted successfully.' });
         } catch (error) {
@@ -131,18 +125,13 @@ module.exports = (db) => {
         try {
             await conn.beginTransaction();
 
-            // Step 1: Update the supplier's main details
             await conn.query(
                 `UPDATE NhaCungCap SET TenNCC = ?, MaSoThue = ? WHERE MaNCC = ?`,
                 [TenNCC, MaSoThue, MaNCC]
             );
 
-            // Step 2: Update addresses
             if (addresses) {
-                // Delete existing addresses before inserting new ones
                 await conn.query(`DELETE FROM DiaChiNCC WHERE MaNCC = ?`, [MaNCC]);
-
-                // Insert new addresses
                 for (const addr of addresses) {
                     await conn.query(
                         `INSERT INTO DiaChiNCC (SoNha, Duong, Quan, ThanhPho, MaNCC) VALUES (?, ?, ?, ?, ?)`,
@@ -150,13 +139,8 @@ module.exports = (db) => {
                     );
                 }
             }
-
-            // Step 3: Update phones
             if (phones) {
-                // Delete existing phones before inserting new ones
                 await conn.query(`DELETE FROM SDT_NCC WHERE MaNCC = ?`, [MaNCC]);
-
-                // Insert new phones
                 for (const phone of phones) {
                     await conn.query(
                         `INSERT INTO SDT_NCC (MaNCC, SDT) VALUES (?, ?)`,
@@ -165,12 +149,8 @@ module.exports = (db) => {
                 }
             }
 
-            // Step 4: Update emails
             if (emails) {
-                // Delete existing emails before inserting new ones
                 await conn.query(`DELETE FROM Email_NCC WHERE MaNCC = ?`, [MaNCC]);
-
-                // Insert new emails
                 for (const email of emails) {
                     await conn.query(
                         `INSERT INTO Email_NCC (MaNCC, Email) VALUES (?, ?)`,
@@ -178,8 +158,6 @@ module.exports = (db) => {
                     );
                 }
             }
-
-            // Commit the transaction
             await conn.commit();
             res.json({ message: 'Supplier updated successfully.' });
         } catch (error) {

@@ -16,7 +16,7 @@ module.exports = (db) => {
                 [MaNV, MaNCC]
             );
 
-            const MaDon = result.insertId; // ID đơn nhập mới
+            const MaDon = result.insertId; 
 
             for (const item of items) {
                 await conn.query(
@@ -48,7 +48,7 @@ module.exports = (db) => {
             `;
             try {
                 const [results] = await db.query(sql);
-                res.json(results); // Trả kết quả dưới dạng JSON
+                res.json(results); 
               } catch (err) {
                 console.error('Lỗi lấy menu:', err);
                 res.status(500).json({ error: 'Lỗi server' });

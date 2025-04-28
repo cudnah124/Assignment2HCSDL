@@ -81,13 +81,13 @@ module.exports = (db) => {
             const maxOrderId = result[0].maxOrderId || 0; // Nếu không có đơn hàng nào, maxOrderId = 0
             const newOrderId = maxOrderId + 1; // Tạo mã đơn hàng mới
 
-            // Bước 2: Thêm đơn hàng vào bảng DonHang
+            // Bước: Thêm đơn hàng vào bảng DonHang
             const [insertOrderResult] = await connection.query(
                 `INSERT INTO DonHang (MaDonHang, MaNV, TrangThai, MaKH, NgayGioTao) VALUES (?, ?, ?, ?, ?)`,
                 [newOrderId, employeeId, status, MaKH, orderDate]
             );
 
-            // Bước 3: Thêm nước uống vào bảng GomDH_NuocUong
+            // Bước: Thêm nước uống vào bảng GomDH_NuocUong
             for (const nuoc of drinks) {
                 const { MaMon, KichThuoc, SoLuong } = nuoc;
                 await connection.query(
@@ -96,7 +96,7 @@ module.exports = (db) => {
                 );
             }
 
-            // Bước 4: Thêm topping vào bảng GomDH_Topping
+            // Bước: Thêm topping vào bảng GomDH_Topping
             for (const topping of toppings) {
                 const { MaMon, SoLuong } = topping;
                 await connection.query(
@@ -119,20 +119,20 @@ module.exports = (db) => {
     });
 
     router.put('/:id', async (req, res) => {
-        const orderId = req.params.id;  // Get the order ID from the URL
-        const { status } = req.body;    // Get the new status from the request body
+        const orderId = req.params.id;  
+        const { status } = req.body;    
     
-        // Kiểm tra xem trạng thái có hợp lệ không
-        const validStatuses = ['Pending', 'Completed', 'Preparing', 'Cancelled'];  // List of valid statuses
+        
+        const validStatuses = ['Pending', 'Completed', 'Preparing', 'Cancelled'];  
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ error: 'Trạng thái không hợp lệ' });
         }
     
-        // Cập nhật trạng thái đơn hàng trong bảng DonHang
-        const sql = `UPDATE DonHang SET TrangThai = ? WHERE MaDonHang = ?`;
+       
+        const sql = `CALL UpdateOrderStatus(?, ?)`;
     
         try {
-            const [result] = await db.query(sql, [status, orderId]);
+            const [result] = await db.query(sql, [orderId, status]);
             
             // Nếu không tìm thấy đơn hàng với ID này
             if (result.affectedRows === 0) {

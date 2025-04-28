@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
 
       console.log("Bắt đầu kiểm tra số điện thoại...");
 
-      // 🔥 Kiểm tra nếu số điện thoại đã tồn tại
+      // Kiểm tra nếu số điện thoại đã tồn tại
       const [existingPhoneRows] = await connection.query(
         `SELECT MaKH FROM SDT_KhachHang WHERE SDT = ?`,
         [cleanedPhone]
@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
       if (existingPhoneRows.length > 0) {
         const existingMaKH = existingPhoneRows[0].MaKH;
 
-        await connection.rollback();  // Không thêm khách mới, rollback luôn
+        await connection.rollback();  // Không thêm khách mới, rollback
         return res.status(200).json({
           message: 'Số điện thoại đã tồn tại.',
           MaKH: existingMaKH

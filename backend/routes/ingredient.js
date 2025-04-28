@@ -36,7 +36,6 @@ module.exports = (db) => {
         }
     });
 
-    // POST new ingredient
     router.post('/', async (req, res) => {
         try {
             const { id, name, description, price, quantity, unit } = req.body;
@@ -69,7 +68,6 @@ module.exports = (db) => {
         }
     });
 
-    // PUT update ingredient
     router.put('/:id', async (req, res) => {
         try {
             const { id } = req.params;
@@ -96,7 +94,6 @@ module.exports = (db) => {
         }
     });
 
-    // DELETE ingredient
     router.delete('/:id', async (req, res) => {
         try {
             const { id } = req.params;

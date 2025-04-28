@@ -7,26 +7,26 @@ module.exports = (db) => {
   router.get('/', async (req, res) => {
     const sql = `
       SELECT 
-  NV.MaNV,
-  NV.Ho,
-  NV.Ten,
-  MAX(DN.SoNha) AS SoNha,
-  MAX(DN.Duong) AS Duong,
-  MAX(DN.Quan) AS Quan,
-  MAX(DN.ThanhPho) AS ThanhPho,
-  GROUP_CONCAT(DISTINCT SDT.SDT) AS SDT,
-  GROUP_CONCAT(DISTINCT Email.Email) AS Email,
-  MAX(DATE_FORMAT(CL.NgayLam, '%Y-%m-%d')) AS NgayLam,
-  MAX(DATE_FORMAT(CL.GioLam, '%Y-%m-%d')) AS GioLam,
-  MAX(DATE_FORMAT(CL.GioTan, '%Y-%m-%d')) AS GioTan
-FROM 
-  NhanVien NV
-LEFT JOIN DiaChiNV DN ON NV.MaNV = DN.MaNV
-LEFT JOIN SDT_NhanVien SDT ON NV.MaNV = SDT.MaNV
-LEFT JOIN Email_NhanVien Email ON NV.MaNV = Email.MaNV
-LEFT JOIN NV_Lam NVL ON NV.MaNV = NVL.MaNV
-LEFT JOIN CaLam CL ON NVL.MaCa = CL.MaCa
-GROUP BY NV.MaNV;
+        NV.MaNV,
+        NV.Ho,
+        NV.Ten,
+        MAX(DN.SoNha) AS SoNha,
+        MAX(DN.Duong) AS Duong,
+        MAX(DN.Quan) AS Quan,
+        MAX(DN.ThanhPho) AS ThanhPho,
+        GROUP_CONCAT(DISTINCT SDT.SDT) AS SDT,
+        GROUP_CONCAT(DISTINCT Email.Email) AS Email,
+        MAX(DATE_FORMAT(CL.NgayLam, '%Y-%m-%d')) AS NgayLam,
+        MAX(DATE_FORMAT(CL.GioLam, '%Y-%m-%d')) AS GioLam,
+        MAX(DATE_FORMAT(CL.GioTan, '%Y-%m-%d')) AS GioTan
+      FROM 
+        NhanVien NV
+      LEFT JOIN DiaChiNV DN ON NV.MaNV = DN.MaNV
+      LEFT JOIN SDT_NhanVien SDT ON NV.MaNV = SDT.MaNV
+      LEFT JOIN Email_NhanVien Email ON NV.MaNV = Email.MaNV
+      LEFT JOIN NV_Lam NVL ON NV.MaNV = NVL.MaNV
+      LEFT JOIN CaLam CL ON NVL.MaCa = CL.MaCa
+      GROUP BY NV.MaNV;
     `;
     try {
       const [results] = await db.query(sql);
@@ -138,7 +138,7 @@ GROUP BY NV.MaNV;
         await connection.query('DELETE FROM Email_NhanVien WHERE MaNV = ?', [id]);
         await connection.query('DELETE FROM SDT_NhanVien WHERE MaNV = ?', [id]);
         await connection.query('DELETE FROM DiaChiNV WHERE MaNV = ?', [id]);
-        await connection.query('DELETE FROM NV_Lam WHERE MaNV = ?', [id]); // Nếu có ràng buộc trong CaLam
+        await connection.query('DELETE FROM NV_Lam WHERE MaNV = ?', [id]); 
         await connection.query('DELETE FROM NhanVien WHERE MaNV = ?', [id]);
     
         await connection.commit();

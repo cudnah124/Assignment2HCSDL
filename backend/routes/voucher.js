@@ -43,11 +43,9 @@ module.exports = (db) => {
             res.status(500).json({ error: 'Lỗi server' });
         }
     });
-
-    // PUT method to update the usage limit of a promotion
     router.put('/:code', async (req, res) => {
         const { code } = req.params;
-        const { times } = req.body; // The new usage count
+        const { times } = req.body; 
       
         const sql = `
         UPDATE KhuyenMai

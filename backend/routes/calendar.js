@@ -3,7 +3,6 @@ const express = require('express');
 module.exports = (db) => {
   const router = express.Router();
 
-  // GET all shifts (ca làm)
   router.get('/', async (req, res) => {
     const sql = `
       SELECT 
@@ -29,7 +28,6 @@ module.exports = (db) => {
     }
   });
 
-  // POST add new shift (thêm ca làm mới + phân công nhân viên)
   router.post('/', async (req, res) => {
     const { NgayLam, GioLam, GioTan, MaNV } = req.body; 
     const connection = await db.getConnection();
@@ -61,7 +59,6 @@ module.exports = (db) => {
     );
 
     // Bước 3: Insert phân công nhân viên vào ca
-    // MaNV có thể là một mảng, nên cần phải thực hiện insert từng nhân viên vào bảng NV_Lam
     
     await connection.query(
       'INSERT INTO NV_Lam (MaNV, MaCa) VALUES (?, ?)',

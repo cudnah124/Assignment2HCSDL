@@ -9,11 +9,9 @@ module.exports = (db) => {
     res.json({ message: "Hello from auth route!" });
   });
 
-  // Đăng nhập
   router.post('/login', async (req, res) => {
     const { username, password, role } = req.body;
-    const table = role === 'sManager' ? 'ManagerAccount' : 'EmployeeAccount'; // Có thể mở rộng role về sau
-
+    const table = role === 'sManager' ? 'ManagerAccount' : 'EmployeeAccount';
     let connection;
 
     try {

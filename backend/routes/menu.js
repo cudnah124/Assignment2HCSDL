@@ -14,7 +14,6 @@ if (!fs.existsSync(uploadPath)) {
 
 module.exports = (db) => {
 
-  // Lấy danh sách menu
   router.get('/', async (req, res) => {
     const sql = `
             SELECT
@@ -49,7 +48,7 @@ module.exports = (db) => {
 
     try {
       const [results] = await db.query(sql);
-      res.json(results); // Trả kết quả dưới dạng JSON
+      res.json(results); 
     } catch (err) {
       console.error('Lỗi lấy menu:', err);
       res.status(500).json({ error: 'Lỗi server' });
