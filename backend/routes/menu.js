@@ -103,14 +103,11 @@ module.exports = (db) => {
       // Nếu có file ảnh được upload
       if (req.file) {
         const imageFile = req.file;
-        const ext = path.extname(imageFile.originalname); // Lấy đuôi file, ví dụ '.jpg'
+        const ext = path.extname(imageFile.originalname); // Lấy đuôi file .jpg
         const filename = `${id}${ext}`;
         const filepath = path.join(uploadPath, filename);
   
         await fs.promises.writeFile(filepath, imageFile.buffer);
-  
-        // Nếu muốn lưu đường dẫn ảnh vào DB, thêm cột ImagePath trong bảng Menu rồi update:
-        // await connection.query('UPDATE Menu SET ImagePath = ? WHERE MaMon = ?', [`/uploads/${filename}`, id]);
       }
   
       await connection.commit();
@@ -193,7 +190,7 @@ module.exports = (db) => {
     try {
       await connection.beginTransaction();
 
-      // Xóa từ các bảng tương ứng: Topping, KichThuocDoUong, NuocUong, Menu
+      // Xóa từ các bảng : Topping, KichThuocDoUong, NuocUong, Menu
       await connection.query('DELETE FROM KichThuocDoUong WHERE MaMon = ?', [monId]);
       await connection.query('DELETE FROM Topping WHERE MaMon = ?', [monId]);
       await connection.query('DELETE FROM NuocUong WHERE MaMon = ?', [monId]);

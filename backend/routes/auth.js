@@ -33,7 +33,7 @@ module.exports = (db) => {
       console.error("Lỗi DB:", err);
       res.status(500).json({ success: false, message: 'Lỗi máy chủ', error: err.message });
     } finally {
-      if (connection) connection.release(); // 🔥 rất quan trọng
+      if (connection) connection.release();
     }
   });
 

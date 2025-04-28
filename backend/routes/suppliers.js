@@ -11,29 +11,29 @@ module.exports = (db) => {
         try {
             await conn.beginTransaction();
     
-            // Step 1: Get the current highest MaNCC
-            const [rows] = await conn.query('SELECT MAX(MaNCC) AS highestMaNCC FROM NhaCungCap');
-            let newMaNCC = 'NC0001'; // Default if no suppliers exist
-    
-            if (rows[0].highestMaNCC) {
-                // Extract the numeric part of the current highest MaNCC
-                const currentMax = rows[0].highestMaNCC;
-                const numericPart = parseInt(currentMax.slice(2)); // Remove 'NC' and get the number
-                newMaNCC = `NC${(numericPart + 1).toString().padStart(4, '0')}`; // Increment and format as 'NC0002'
-            }
+            
     
             // Step 2: Insert the supplier with the new MaNCC
             await conn.query(
-                `INSERT INTO NhaCungCap (MaNCC, TenNCC, MaSoThue) VALUES (?, ?, ?)`,
-                [newMaNCC, TenNCC, MaSoThue]
+                `INSERT INTO NhaCungCap (TenNCC, MaSoThue) VALUES (?, ?)`,
+                [TenNCC, MaSoThue]
             );
+
+            const [rows] = await conn.query('SELECT MAX(MaNCC) AS highestMaNCC FROM NhaCungCap');
+            let newMaNCC = 'NC0001'; 
+    
+            if (rows[0].highestMaNCC) {
+                const currentMax = rows[0].highestMaNCC;
+                const numericPart = parseInt(currentMax.slice(2)); 
+                newMaNCC = `NC${(numericPart).toString().padStart(4, '0')}`;
+            }
     
             // Step 3: Insert addresses, phones, and emails
             if (addresses?.length) {
                 for (const addr of addresses) {
                     await conn.query(
                         `INSERT INTO DiaChiNCC (SoNha, Duong, Quan, ThanhPho, MaNCC) VALUES (?, ?, ?, ?, ?)`,
-                        [addr.SoNha, addr.Duong, addr.Quan, addr.ThanhPho, newMaNCC]
+                        [addr.soNha, addr.tenDuong, addr.quan, addr.thanhPho, newMaNCC]
                     );
                 }
             }

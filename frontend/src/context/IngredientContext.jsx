@@ -126,14 +126,12 @@ export const IngredientProvider = ({ children }) => {
                 phones: newSupplier.phones,
                 emails: newSupplier.emails,
             });
-            
-            console.log("Hehe")
-            if (response.data.message) {
+            if (response) {
                 // If supplier is created successfully, update the state
                 setSupplier([...suppliers, newSupplier]);
             }
     
-            return response.data;
+            return response;
         } catch (error) {
             console.error('Error adding supplier:', error);
             return { success: false, error: error.message };

@@ -92,3 +92,17 @@ input[type="date"] {
   background-color: #f2f2f2;
   font-weight: bold;
 }
+
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 80vh;  /* Giới hạn chiều cao của popup */
+  overflow-y: auto;  /* Cho phép cuộn khi nội dung vượt quá chiều cao */
+  width: 600px;
+  box-sizing: border-box;
+}
+.popup-content {
+  padding-bottom: 20px;  /* Đảm bảo có đủ không gian dưới cùng */
+}

@@ -23,9 +23,9 @@ function Ingredient() {
     const [newSupplier, setNewSupplier] = useState({
         TenNCC: '',         // Supplier Name
         MaSoThue: '',       // Tax Code
-        addresses: [],      // Array to hold addresses
-        phones: [],         // Array to hold phone numbers
-        emails: []          // Array to hold email addresses
+        addresses: [{ soNha: '', tenDuong: '', quan: '', thanhPho: '' }],  // Initial empty address object
+        phones: [''],        // Initial empty phone number
+        emails: ['']          // Array to hold email addresses
     });
     const [newPur, setNewPur] = useState({
         MaNV: '',
@@ -196,6 +196,7 @@ function Ingredient() {
 
     // Add new supplier
     const handleAddSupplierSave = async () => {
+        console.log(newSupplier.addresses)
         const result = await addSupplier({
             TenNCC: newSupplier.TenNCC,
             MaSoThue: newSupplier.MaSoThue,
@@ -204,7 +205,7 @@ function Ingredient() {
             emails: newSupplier.emails
         });
     
-        if (result.success) {
+        if (result) {
             setActionStatus({ message: 'Supplier added successfully!', type: 'success' });
             // Reset form fields
             setNewSupplier({
@@ -335,40 +336,97 @@ function Ingredient() {
                         /><br />
 
                         {/* For handling addresses */}
-                        <label>Addresses:</label>
-                        <input 
-                            value={newSupplier.addresses.join(', ')} 
-                            onChange={(e) => setNewSupplier({ 
-                                ...newSupplier, 
-                                addresses: e.target.value.split(',').map(item => item.trim()) 
-                            })} 
-                            placeholder="Enter addresses separated by commas" 
-                        /><br />
+                        <label>Address</label>
+                        {newSupplier.addresses.map((address, index) => (
+                            <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc' }}>
+                                <label>Số nhà:</label>
+                                <input
+                                value={address.soNha}
+                                onChange={(e) => {
+                                    const updatedAddresses = [...newSupplier.addresses];
+                                    updatedAddresses[index].soNha = e.target.value;
+                                    setNewSupplier({ ...newSupplier, addresses: updatedAddresses });
+                                }}
+                                /><br />
+
+                                <label>Tên đường:</label>
+                                <input
+                                value={address.tenDuong}
+                                onChange={(e) => {
+                                    const updatedAddresses = [...newSupplier.addresses];
+                                    updatedAddresses[index].tenDuong = e.target.value;
+                                    setNewSupplier({ ...newSupplier, addresses: updatedAddresses });
+                                }}
+                                /><br />
+
+                                <label>Quận:</label>
+                                <input
+                                value={address.quan}
+                                onChange={(e) => {
+                                    const updatedAddresses = [...newSupplier.addresses];
+                                    updatedAddresses[index].quan = e.target.value;
+                                    setNewSupplier({ ...newSupplier, addresses: updatedAddresses });
+                                }}
+                                /><br />
+
+                                <label>Thành phố:</label>
+                                <input
+                                value={address.thanhPho}
+                                onChange={(e) => {
+                                    const updatedAddresses = [...newSupplier.addresses];
+                                    updatedAddresses[index].thanhPho = e.target.value;
+                                    setNewSupplier({ ...newSupplier, addresses: updatedAddresses });
+                                }}
+                                /><br />
+                            </div>
+                        ))}
 
                         {/* For handling phones */}
                         <label>Phones:</label>
-                        <input 
-                            value={newSupplier.phones.join(', ')} 
-                            onChange={(e) => setNewSupplier({ 
-                                ...newSupplier, 
-                                phones: e.target.value.split(',').map(item => item.trim()) 
-                            })} 
-                            placeholder="Enter phones separated by commas" 
-                        /><br />
+                        {newSupplier.phones.map((phone, index) => (
+                            <div key={index} style={{ marginBottom: '5px' }}>
+                                <input
+                                value={phone}
+                                onChange={(e) => {
+                                    const updatedPhones = [...newSupplier.phones];
+                                    updatedPhones[index] = e.target.value;
+                                    setNewSupplier({ ...newSupplier, phones: updatedPhones });
+                                }}
+                                />
+                            </div>
+                        ))}
 
                         {/* For handling emails */}
                         <label>Emails:</label>
-                        <input 
-                            value={newSupplier.emails.join(', ')} 
-                            onChange={(e) => setNewSupplier({ 
-                                ...newSupplier, 
-                                emails: e.target.value.split(',').map(item => item.trim()) 
-                            })} 
-                            placeholder="Enter emails separated by commas" 
-                        /><br />
+                        {newSupplier.emails.map((email, index) => (
+                            <div key={index} style={{ marginBottom: '5px' }}>
+                                <input
+                                value={email}
+                                onChange={(e) => {
+                                    const updatedEmails = [...newSupplier.emails];
+                                    updatedEmails[index] = e.target.value;
+                                    setNewSupplier({ ...newSupplier, emails: updatedEmails });
+                                }}
+                                />
+                            </div>
+                        ))}
 
                         <button onClick={handleAddSupplierSave}>Add</button>
-                        <button onClick={() => setShowAddSupplierForm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
+                        <button
+                        onClick={() => {
+                            setShowAddSupplierForm(false);
+                            setNewSupplier({
+                                TenNCC: '',         // Supplier Name
+                                MaSoThue: '',       // Tax Code
+                                addresses: [{ soNha: '', tenDuong: '', quan: '', thanhPho: '' }],  // Initial empty address object
+                                phones: [''],       
+                                emails: ['']       
+                            });
+                        }}
+                        style={{ marginLeft: '10px' }}
+                        >
+                        Cancel
+                        </button>
                     </div>
                 </div>
             )}
